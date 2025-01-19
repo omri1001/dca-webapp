@@ -3,7 +3,7 @@ import { Stack, Typography } from '@mui/material';
 import { AppAlert, AppButton, AppLink, AppView } from '@/components';
 
 /**
- * "Not Found" aka "Error 404" view
+ * "Not Found" aka "Error 404" views
  * url: any unknown :)
  * @page NotFoundView
  */
@@ -17,8 +17,7 @@ const NotFoundView = () => {
   return (
     <AppView>
       <Typography variant="h3" component="h1">
-        Page not found!
-      </Typography>
+בפיתוח</Typography>
       <Typography variant="body1">
         Requested address is unknown, please check your URL or go to the <AppLink to="/">home page</AppLink>.
       </Typography>

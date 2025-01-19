@@ -12,10 +12,9 @@ import { AppIconProps } from '../AppIcon/AppIcon';
 import { MUI_ICON_BUTTON_COLORS } from './utils';
 
 export interface AppIconButtonProps extends Omit<MuiIconButtonProps, 'color'> {
-  color?: string; // Not only 'inherit' | 'default' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning',
-  icon: IconName;
+  color?: string;
+  icon: IconName | 'dca_logo_png';
   iconProps?: Partial<AppIconProps>;
-  // Missing props
   component?: ElementType; // Could be RouterLink, AppLink, <a>, etc.
   to?: string; // Link prop
   href?: string; // Link prop
@@ -24,42 +23,34 @@ export interface AppIconButtonProps extends Omit<MuiIconButtonProps, 'color'> {
 }
 
 /**
- * Renders MUI IconButton with SVG image by given Icon name
- * @param {string} [color] - color of background and hover effect. Non MUI values is also accepted.
- * @param {boolean} [disabled] - the IconButton is not active when true, also the Tooltip is not rendered.
- * @param {string} [href] - external link URI
- * @param {string} icon - name of Icon to render inside the IconButton
- * @param {object} [iconProps] - additional props to pass into the AppIcon component
- * @param {boolean} [openInNewTab] - link will be opened in new tab when true
- * @param {string} [size] - size of the button: 'small', 'medium' or 'large'
- * @param {Array<func| object| bool> | func | object} [sx] - additional CSS styles to apply to the button
- * @param {string} [title] - when set, the IconButton is rendered inside Tooltip with this text
- * @param {string} [to] - internal link URI
- * @param {object} [tooltipProps] - additional props to pass into the Tooltip component
+ * Renders MUI IconButton with SVG image (AppIcon) by default,
+ * but will render a PNG if `icon` is set to "dca_logo_png".
  */
 const AppIconButton: FunctionComponent<AppIconButtonProps> = ({
-  color = 'default',
-  component,
-  children,
-  disabled,
-  icon,
-  iconProps,
-  sx,
-  title,
-  tooltipProps,
-  ...restOfProps
-}) => {
+                                                                color = 'default',
+                                                                component,
+                                                                children,
+                                                                disabled,
+                                                                icon,
+                                                                iconProps,
+                                                                sx,
+                                                                title,
+                                                                tooltipProps,
+                                                                ...restOfProps
+                                                              }) => {
   const componentToRender =
-    !component && (restOfProps?.href || restOfProps?.to)
-      ? AppLink // Use AppLink when .href or .to properties are set
-      : (component ?? MuiIconButton); // Use MuiIconButton when .component is not set
+      !component && (restOfProps?.href || restOfProps?.to)
+          ? AppLink // Use AppLink when .href or .to is set
+          : (component ?? MuiIconButton);
 
   const isMuiColor = useMemo(() => MUI_ICON_BUTTON_COLORS.includes(color), [color]);
 
   const iconButtonToRender = useMemo(() => {
     const colorToRender = isMuiColor ? (color as MuiIconButtonProps['color']) : 'default';
+
     const sxToRender = {
       ...sx,
+      // If color is NOT a standard MUI color, apply custom color & hover
       ...(!isMuiColor && {
         color: color,
         ':hover': {
@@ -67,28 +58,53 @@ const AppIconButton: FunctionComponent<AppIconButtonProps> = ({
         },
       }),
     };
-    return (
-      <MuiIconButton
-        component={componentToRender}
-        color={colorToRender}
-        disabled={disabled}
-        sx={sxToRender}
-        {...restOfProps}
-      >
-        <AppIcon icon={icon} {...iconProps} />
-        {children}
-      </MuiIconButton>
-    );
-  }, [color, componentToRender, children, disabled, icon, isMuiColor, sx, iconProps, restOfProps]);
 
-  // When title is set, wrap the IconButton with Tooltip.
-  // Note: when IconButton is disabled the Tooltip is not working, so we don't need it
+    return (
+        <MuiIconButton
+            component={componentToRender}
+            color={colorToRender}
+            disabled={disabled}
+            sx={sxToRender}
+            {...restOfProps}
+        >
+          {icon === 'dca_logo_png' ? (
+              // --- Use your PNG instead of AppIcon ---
+              <img
+                  src="/img/favicon/dca_logo.png"
+                  alt="DCA Logo"
+                  style={{
+                    // You can override width/height here or via iconProps
+                    width: 100,
+                    height: 100,
+                    objectFit: 'contain',
+                  }}
+              />
+          ) : (
+              // --- Default fallback: use the normal AppIcon (SVG) ---
+              <AppIcon icon={icon} {...iconProps} />
+          )}
+          {children}
+        </MuiIconButton>
+    );
+  }, [
+    color,
+    componentToRender,
+    children,
+    disabled,
+    icon,
+    isMuiColor,
+    sx,
+    iconProps,
+    restOfProps,
+  ]);
+
+  // Wrap in a Tooltip if `title` is set and the button isn’t disabled
   return title && !disabled ? (
-    <MuiTooltip title={title} {...tooltipProps}>
-      {iconButtonToRender}
-    </MuiTooltip>
+      <MuiTooltip title={title} {...tooltipProps}>
+        {iconButtonToRender}
+      </MuiTooltip>
   ) : (
-    iconButtonToRender
+      iconButtonToRender
   );
 };
 

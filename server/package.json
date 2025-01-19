@@ -1,0 +1,29 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "canvas": "^3.0.1",
+    "chart.js": "^4.4.7",
+    "cors": "^2.8.5",
+    "docx": "^8.0.0",
+    "docxtemplater": "^3.57.2",
+    "docxtemplater-image-module-free": "^1.1.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mammoth": "^1.9.0",
+    "mongoose": "^8.9.2",
+    "officegen": "^0.6.5",
+    "openai": "^4.77.3",
+    "pdf-lib": "^1.17.1",
+    "pizzip": "^3.1.7"
+  }
+}

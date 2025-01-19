@@ -36,9 +36,9 @@ const UserInfo = ({ showAvatar = false, user, ...restOfProps }: UserInfoProps) =
         </AppLink>
       ) : null}
       <Typography sx={{ mt: 1 }} variant="h6">
-        {fullName || 'Current User'}
+        {"Almog Arie"}
       </Typography>
-      <Typography variant="body2">{userPhoneOrEmail || 'Loading...'}</Typography>
+
     </Stack>
   );
 };
