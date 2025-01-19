@@ -4,8 +4,8 @@ import { PrivateLayout } from '@/layout';
 import { NotFoundView } from '@/views';
 import AboutView from '@/views/About';
 import DevView from '@/views/Dev';
-import WelcomeView from '@/views/Welcome';
-import NotImplementedView from '@/views/NotImplementedView';
+import CombatReports from '../views/Reports';
+import NotImplementedView from '@/views/PollTrainees.tsx';
 
 const PRIVATE_ROUTES = [
   {
@@ -17,7 +17,7 @@ const PRIVATE_ROUTES = [
       },
       {
         path: '/',
-        element: <WelcomeView />,
+        element: <CombatReports />,
       },
       {
         path: 'auth/*',

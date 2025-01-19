@@ -1,55 +1,88 @@
-# Starter project for Vite with React + MUI using TypeScript
+# DCA-Webapp
 
-Mix of [npm create vite](https://vitejs.dev/guide/) and [MUI](https://mui.com) with set of reusable components
-and utilities to build professional React application faster.
+## Overview
 
-- [Source Code](https://github.com/karpolan/react-mui-vite-ts)
-- [Online Demo](https://react-mui-vite-ts.netlify.app)
+**DCA-Webapp** is a full-stack web application that presents various reports and leverages GPT-4 (Large Language Model) functionality on the server side. The project is split into two main parts:
 
-Includes:
+1. **Client (React + MUI + Vite + TypeScript)** – Located in the `react-mui-vite-ts` folder.
+2. **Server (Node.js + Express)** – Located in the `server` folder.
 
-- **Prettier** for code formatting
-- **Eslint** for error checking
-- **Vitest** (or **Jest**) with **Testing Library** for testing components and hooks
-- Set of common **components**, useful **hooks**, and essential **utilities**
-- State management using **Context API**
-- Different and customized **Public** and **Private** layouts
-- Basic **authentication** hooks and events
-- **Dark** and **Light** mode with a toggle
-- FavIcon and Manifest for **PWA**
+This README provides setup instructions for both parts of the application.
 
-## How to use
+---
 
-1. Clone or download the repo from: https://github.com/karpolan/react-mui-vite-ts
-2. Copy `.env.example` file into `.env` file
-3. Replace `_TITLE_` and `_DESCRIPTION_` in all files with own texts
-4. Check and resolve all `// TODO: ` directives
-5. Add your own code :)
+## Repository Structure
+```
+dca-webapp/
+├── react-mui-vite-ts/   # Client-side (React, MUI, Vite, TS)
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── ...
+└── server/              # Server-side (Node.js, Express)
+├── package.json
+└── server.js
+```
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Prerequisites
 
-### `npm run dev`
+- **Node.js** (v14+ recommended)
+- **npm** (v6+ recommended)
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+---
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Client Setup
 
-### `npm run lint`
+1. ** Install dependencies:**:
 
-Checks the code for errors and missing things
+    ```bash
+    npm install
+    ```
+   Run the client:
+     ```bash
+    npm start
+     ```
+## Server Setup
+Navigate to the server folder:
+```bash
+cd server
+```
+Install dependencies:
+```bash
+npm install
+```
+Run the server:
+```bash
+npm start
+```
 
-### `npm run format`
+Environment Variables
+For the server-side to interact with GPT-4 and other services, you need to configure the following environment variables in a .env file:
+```
+OPENAI_API_KEY=<your-openai-api-key>
+MONGODB_URI=<your-mongodb-connection-string>
+```
 
-Formats the code according to `./prettier.config.mjs` config
+## Built With
+Client (react-mui-vite-ts):
 
-### `npm test`
+React 19
+Material-UI (MUI)
+Vite
+TypeScript
+React Router
+Recharts
+Axios
+Server (server):
 
-Launches the test runner in the interactive watch mode.<br />
+Node.js
+Express
+Mongoose (MongoDB)
+OpenAI
+Chart.js
+Docx, Docxtemplater
+PDF-lib
+Officegen
+And other utility packages
 
-### `npm run build`
-
-Builds the app for production or local development to the `dist` folder.<br />

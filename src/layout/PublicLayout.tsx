@@ -8,7 +8,7 @@ import TopBarAndSideBarLayout from './TopBarAndSideBarLayout';
 import { BOTTOM_BAR_DESKTOP_VISIBLE } from './config';
 
 // TODO: change to your app name or other word
-const TITLE_PUBLIC = 'Unauthorized - _TITLE_'; // Title for pages without/before authentication
+const TITLE_PUBLIC = 'DCA-WEB'; // Title for pages without/before authentication
 
 /**
  * SideBar navigation items with links for Public Layout

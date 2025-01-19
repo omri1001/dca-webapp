@@ -2,9 +2,6 @@ import { ComponentType, FunctionComponent, SVGAttributes } from 'react';
 import { APP_ICON_SIZE } from '@/components/config';
 import { IconName, ICONS } from './config';
 
-/**
- * Props of the AppIcon component, also can be used for SVG icons
- */
 export interface AppIconProps extends SVGAttributes<SVGElement> {
   color?: string;
   icon: IconName;
@@ -12,28 +9,45 @@ export interface AppIconProps extends SVGAttributes<SVGElement> {
   title?: string;
 }
 
-/**
- * Renders SVG icon by given Icon name
- * @component AppIcon
- * @param {string} [color] - color of the icon as a CSS color value
- * @param {string} icon - name of the Icon to render
- * @param {string} [title] - title/hint to show when the cursor hovers the icon
- * @param {string | number} [size] - size of the icon, default is ICON_SIZE
- */
-const AppIcon: FunctionComponent<AppIconProps> = ({ color, icon, size = APP_ICON_SIZE, style, ...restOfProps }) => {
+const AppIcon: FunctionComponent<AppIconProps> = ({
+                                                    color,
+                                                    icon,
+                                                    size = APP_ICON_SIZE,
+                                                    style,
+                                                    ...restOfProps
+                                                  }) => {
+  // 1) If icon is "dca_logo_png", render the PNG
+  if (icon === 'dca_logo_png') {
+    return (
+        <img
+            src="/img/favicon/dca_logo.png"
+            alt="DCA Logo"
+            // Let size control the width/height
+            style={{
+              ...style,
+              width: size,
+              height: size,
+              objectFit: 'contain', // optional, keeps aspect ratio
+            }}
+            {...restOfProps}
+        />
+    );
+  }
+
+  // 2) Otherwise, fall back to the usual SVG logic
   let ComponentToRender: ComponentType = ICONS[icon];
   if (!ComponentToRender) {
     console.warn(`AppIcon: icon "${icon}" not found!`);
-    ComponentToRender = ICONS.default; // ICONS['default'];
+    ComponentToRender = ICONS.default;
   }
 
   const propsToRender = {
     height: size,
+    width: size,
     color,
-    fill: color && 'currentColor', // If color is set, fill the icon with the 'currentColor'
+    fill: color && 'currentColor', // If color is set, fill the icon with 'currentColor'
     size,
     style: { ...style, color },
-    width: size,
     ...restOfProps,
   };
 

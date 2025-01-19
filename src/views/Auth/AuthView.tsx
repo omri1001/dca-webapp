@@ -3,7 +3,7 @@ import { Stack } from '@mui/material';
 import { useAppStore } from '@/store';
 import { useEventLogout } from '@/hooks/auth';
 import { AppButton, AppLink, AppView } from '@/components';
-import NotImplementedView from '../NotImplementedView';
+import NotImplementedView from '../PollTrainees.tsx';
 import { sessionStorageSet } from '@/utils/sessionStorage';
 
 const AuthView = () => {

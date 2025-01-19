@@ -3,7 +3,7 @@ import { AppButton, AppView } from '@/components';
 import { getCurrentVersion } from '@/utils';
 
 /**
- * Renders "About" view
+ * Renders "About" views
  * url: /about
  * @page About
  */
@@ -11,8 +11,8 @@ const AboutView = () => {
   return (
     <AppView>
       <Card>
-        <CardHeader title="Application _TITLE_ here..." subheader={`Version ${getCurrentVersion()}`} />
-        <CardContent>TODO: Detailed _DESCRIPTION_ of the application here...</CardContent>
+        <CardHeader title="בפיתוח" subheader={`Version ${getCurrentVersion()}`} />
+        <CardContent>TODO:</CardContent>
         <CardActions>
           <AppButton to="/" color="primary">
             OK

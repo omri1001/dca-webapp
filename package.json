@@ -21,14 +21,20 @@
     "test": "npm run test:vitest"
   },
   "dependencies": {
-    "@emotion/react": "latest",
-    "@emotion/styled": "latest",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "latest",
-    "@mui/material": "latest",
+    "@mui/material": "^6.2.1",
+    "axios": "^1.7.9",
     "copy-to-clipboard": "latest",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.9.2",
     "react": "^19",
     "react-dom": "^19",
-    "react-router-dom": "latest"
+    "react-router-dom": "latest",
+    "recharts": "^2.15.0"
   },
   "devDependencies": {
     "@eslint/js": "^9",
