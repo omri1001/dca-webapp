@@ -113,27 +113,6 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
                         variant="outlined"
                         size="small"
                     />
-                    <TextField
-                        label="ציון סופי"
-                        type="number"
-                        value={finalGrade}
-                        onChange={(e) => setFinalGrade(e.target.value)}
-                        variant="outlined"
-                        size="small"
-                    />
-                    <FormControl size="small">
-                        <InputLabel>מדד</InputLabel>
-                        <Select
-                            value={finalGradeComparator}
-                            label="Comparator"
-                            onChange={(e) => setFinalGradeComparator(e.target.value)}
-                        >
-                            <MenuItem value="">None</MenuItem>
-                            <MenuItem value="above">מעל</MenuItem>
-                            <MenuItem value="below">מתחת</MenuItem>
-                        </Select>
-                    </FormControl>
-
                     <Stack direction="row" spacing={1}>
                         <Button variant="contained" color="primary" onClick={handleApply}>
                             סנן

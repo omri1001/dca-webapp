@@ -62,11 +62,11 @@ const CombatReports: React.FC = () => {
     const describeFilters = () => {
         const parts: string[] = [];
         if (currentFilters.freeText)
-            parts.push(`FreeText: "${currentFilters.freeText}"`);
+            parts.push(`טסקט חופשי: "${currentFilters.freeText}"`);
         if (currentFilters.forceName)
-            parts.push(`ForceName: "${currentFilters.forceName}"`);
+            parts.push(`מסגרת: "${currentFilters.forceName}"`);
         if (currentFilters.date)
-            parts.push(`Date: "${currentFilters.date}"`);
+            parts.push(`תאריך: "${currentFilters.date}"`);
         return parts.join(', ');
     };
 
