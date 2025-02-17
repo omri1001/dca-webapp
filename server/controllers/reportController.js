@@ -15,11 +15,12 @@ exports.getAllReports = async (req, res) => {
 };
 
 /**
- * GET report by primary_key
+ * GET report by primaryKey
  */
 exports.getReportByPrimaryKey = async (req, res) => {
     try {
-        const doc = await Report.findOne({ primary_key: req.params.primaryKey });
+        // Note: We now use "primaryKey" (not "primary_key")
+        const doc = await Report.findOne({ primaryKey: req.params.primaryKey });
         if (!doc) {
             return res.status(404).json({ success: false, error: 'Not found' });
         }
@@ -30,12 +31,40 @@ exports.getReportByPrimaryKey = async (req, res) => {
 };
 
 /**
- * CREATE a new report,
- * parsing { $numberInt } / { $numberDouble } into real numbers
+ * FILTER reports by freeText, battalionName, date
+ */
+exports.filterReports = async (req, res) => {
+    try {
+        const { freeText, battalionName, date } = req.query;
+        const q = {};
+        if (freeText && freeText.trim()) {
+            q.$or = [
+                { primaryKey: { $regex: freeText, $options: 'i' } },
+                { battalionName: { $regex: freeText, $options: 'i' } },
+                // Now look for scenario text inside data.scenarios
+                { 'data.scenarios.scenario1.scenarioText': { $regex: freeText, $options: 'i' } },
+                { 'data.scenarios.scenario2.scenarioText': { $regex: freeText, $options: 'i' } }
+            ];
+        }
+        if (battalionName) {
+            q.battalionName = { $regex: battalionName, $options: 'i' };
+        }
+        if (date) {
+            q.date = date;
+        }
+        const reports = await Report.find(q);
+        return res.json({ success: true, data: reports });
+    } catch (err) {
+        return res.status(500).json({ success: false, error: 'Server error' });
+    }
+};
+/**
+ * CREATE a new report.
+ * (Any numeric objects such as { $numberInt: "x" } or { $numberDouble: "y" } are parsed)
  */
 exports.createReport = async (req, res) => {
     try {
-        const parsedBody = parseGrades(req.body);
+        const parsedBody = parseNumbers(req.body);
         const newDoc = new Report(parsedBody);
         await newDoc.save();
         return res.json({ success: true, data: newDoc });
@@ -46,51 +75,46 @@ exports.createReport = async (req, res) => {
 };
 
 /**
- * FILTER reports by freeText, forceName, date
+ * UPDATE an existing report by _id
  */
-exports.filterReports = async (req, res) => {
+exports.updateReport = async (req, res) => {
     try {
-        const { freeText, forceName, date } = req.query;
-        const q = {};
-        if (freeText && freeText.trim()) {
-            q.$or = [
-                { primary_key: { $regex: freeText, $options: 'i' } },
-                { force_name: { $regex: freeText, $options: 'i' } },
-                { 'scenarios.scenario_1': { $regex: freeText, $options: 'i' } },
-                { 'scenarios.scenario_2': { $regex: freeText, $options: 'i' } }
-            ];
+        const { id } = req.params;
+        const parsedBody = parseNumbers(req.body);
+        const updatedDoc = await Report.findByIdAndUpdate(id, parsedBody, { new: true });
+        if (!updatedDoc) {
+            return res.status(404).json({ success: false, error: 'Report not found' });
         }
-        if (forceName) q.force_name = { $regex: forceName, $options: 'i' };
-        if (date) q.date = date;
-
-        const reports = await Report.find(q);
-        return res.json({ success: true, data: reports });
+        return res.json({ success: true, data: updatedDoc });
     } catch (err) {
+        console.error('[updateReport] Error:', err);
         return res.status(500).json({ success: false, error: 'Server error' });
     }
 };
 
 /**
- * Helper: Convert any { $numberInt: "x" } / { $numberDouble: "y" }
- * into real JS numbers so Mongoose won't reject them.
+ * Helper: Convert any { $numberInt: "x" } or { $numberDouble: "y" }
+ * objects into real JS numbers so that Mongoose accepts them.
  */
-function parseGrades(originalBody) {
+function parseNumbers(originalBody) {
+    // Deep clone the object to ensure we can traverse it
     const body = JSON.parse(JSON.stringify(originalBody));
 
-    if (body.grades && typeof body.grades === 'object') {
-        for (const categoryKey of Object.keys(body.grades)) {
-            const cat = body.grades[categoryKey];
-            if (!cat) continue;
-
-            // Parse "average" if it has { $numberInt } or { $numberDouble }
-            if (cat.average && typeof cat.average === 'object') {
-                cat.average = convertToNumber(cat.average);
-            }
-
-            // Parse each "item" if it has { $numberInt } or { $numberDouble }
-            if (cat.items && typeof cat.items === 'object') {
-                for (const itemKey of Object.keys(cat.items)) {
-                    cat.items[itemKey] = convertToNumber(cat.items[itemKey]);
+    // For nested fields under "data" (for example, grades), convert any numbers
+    if (body.data && typeof body.data === 'object') {
+        if (body.data.grades && typeof body.data.grades === 'object') {
+            for (const categoryKey of Object.keys(body.data.grades)) {
+                const cat = body.data.grades[categoryKey];
+                if (!cat) continue;
+                // Convert "average" if needed
+                if (cat.average && typeof cat.average === 'object') {
+                    cat.average = convertToNumber(cat.average);
+                }
+                // Convert each "item" if needed
+                if (cat.items && typeof cat.items === 'object') {
+                    for (const itemKey of Object.keys(cat.items)) {
+                        cat.items[itemKey] = convertToNumber(cat.items[itemKey]);
+                    }
                 }
             }
         }
@@ -98,10 +122,6 @@ function parseGrades(originalBody) {
     return body;
 }
 
-/**
- * Convert a potential { $numberInt: "x" } or { $numberDouble: "y" }
- * object into a real numeric value.
- */
 function convertToNumber(valObj) {
     if (!valObj || typeof valObj !== 'object') return valObj;
     if (valObj.$numberInt) {
@@ -112,31 +132,3 @@ function convertToNumber(valObj) {
     }
     return valObj;
 }
-
-
-/**
- * UPDATE an existing report by _id
- */
-exports.updateReport = async (req, res) => {
-    try {
-        const { id } = req.params;
-
-        // Optionally parse { $numberInt }, { $numberDouble } in the body
-        // so Mongoose won't reject them
-        const parsedBody = parseGrades(req.body);
-
-        // Find and update, returning the new document
-        const updatedDoc = await Report.findByIdAndUpdate(id, parsedBody, {
-            new: true
-        });
-
-        if (!updatedDoc) {
-            return res.status(404).json({ success: false, error: 'Report not found' });
-        }
-
-        return res.json({ success: true, data: updatedDoc });
-    } catch (err) {
-        console.error('[updateReport] Error:', err);
-        return res.status(500).json({ success: false, error: 'Server error' });
-    }
-};
