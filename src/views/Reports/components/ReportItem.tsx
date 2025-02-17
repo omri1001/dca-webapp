@@ -1,32 +1,38 @@
-import React, { useState } from 'react';
-import {
-    Typography,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    Box,
-    Stack,
-    IconButton
-} from '@mui/material';
+// src/views/Reports/components/ReportItem.tsx
+
+import React from 'react';
+import { Accordion, AccordionSummary, AccordionDetails, Box } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
+import ReportItemSummary from './ReportItem/ReportItemSummary';
+import Grades from './ReportItem/Grades';
+import Scenarios from './ReportItem/Scenarios';
 
-// Import your EditReportDialog
-import EditReportDialog from './EditReportDialog';
-
-/**
- * Minimal interface reflecting only the fields you want to display.
- */
 export interface IReport {
     _id: string;
+    primaryKey: string;
+    reportType: string; // 'פלוגה' or 'גדוד'
+    battalionName: string;
+    platoonSymbol?: string;
     date: string;
-    force_name: string;
-    manager: string;
-    location: string;
-    scenarios: {
-        scenario_1: string;
-        scenario_2: string;
-    };
+    mentorName: string;
+    exerciseManagerName: string;
+    mission: string;
+    data: {
+        grades: {
+            grade1: any;
+            grade2: any;
+        };
+        scenarios: {
+            scenario1: {
+                scenarioText: string;
+                scenarioUseAI: boolean;
+            };
+            scenario2: {
+                scenarioText: string;
+                scenarioUseAI: boolean;
+            };
+        };
+    } | null;
 }
 
 interface ReportItemProps {
@@ -34,107 +40,64 @@ interface ReportItemProps {
 }
 
 const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
-    // State to control the Edit Dialog
-    const [editOpen, setEditOpen] = useState(false);
+    // Provide default data in case report.data is null.
+    const defaultGrades = {
+        grade1: { name: '', scoreData: { parts: [], finalGrade: 0 } },
+        grade2: { name: '', scoreData: { parts: [], finalGrade: 0 } },
+    };
 
-    const handleEditOpen = () => setEditOpen(true);
-    const handleEditClose = () => setEditOpen(false);
+    const defaultScenarios = {
+        scenario1: { scenarioText: '', scenarioUseAI: false },
+        scenario2: { scenarioText: '', scenarioUseAI: false },
+    };
 
-    // Handler when user saves the updated report
-    const handleUpdate = async (id: string, updatedData: any) => {
-        console.log('Updated data for ID:', id, updatedData);
+    const grades = report.data?.grades || defaultGrades;
+    const scenarios = report.data?.scenarios || defaultScenarios;
 
-        try {
-            // Call your server's PUT endpoint to update the report
-            const response = await fetch(`http://localhost:3001/api/reports/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData),
-            });
+    // Handlers for add/edit events.
+    const handleEditGrade = (gradeType: 'grade1' | 'grade2') => {
+        console.log('Edit grade', gradeType);
+    };
 
-            const result = await response.json();
-            if (result.success) {
-                console.log('Update successful:', result.data);
-                // Reload or re-fetch as needed
-                window.location.reload();
-            } else {
-                console.error('Update failed:', result.error);
-            }
-        } catch (err) {
-            console.error('Update error:', err);
-        }
+    const handleAddGrade = (gradeType: 'grade1' | 'grade2') => {
+        console.log('Add grade', gradeType);
+    };
 
-        // Close the dialog
-        setEditOpen(false);
+    const handleEditScenario = (scenarioType: 'scenario1' | 'scenario2') => {
+        console.log('Edit scenario', scenarioType);
+    };
+
+    const handleAddScenario = (scenarioType: 'scenario1' | 'scenario2') => {
+        console.log('Add scenario', scenarioType);
     };
 
     return (
-        <>
-            <Accordion disableGutters sx={{ marginBottom: 2, border: '1px solid #ccc' }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Box
-                        sx={{
-                            width: '100%',
-                            textAlign: 'right',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}
-                    >
-                        <Box>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                                שם הכוח: {report.force_name}
-                            </Typography>
-                            <Typography variant="body2">
-                                תאריך: {report.date} , מיקום: {report.location}
-                            </Typography>
-                        </Box>
-                        {/* Edit button */}
-                        <IconButton onClick={handleEditOpen} size="small" sx={{ ml: 2 }}>
-                            <EditIcon />
-                        </IconButton>
-                    </Box>
-                </AccordionSummary>
-
-                <AccordionDetails sx={{ textAlign: 'right' }}>
-                    <Stack spacing={2}>
-                        <Box>
-                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                                מנהל התרגיל: {report.manager}
-                            </Typography>
-                        </Box>
-
-                        {/* Scenario 1 */}
-                        <Box>
-                            <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1 }}>
-                                תרחיש ראשון
-                            </Typography>
-                            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                                {report.scenarios.scenario_1}
-                            </Typography>
-                        </Box>
-
-                        {/* Scenario 2 */}
-                        <Box>
-                            <Typography variant="body1" sx={{ fontWeight: 'bold', mb: 1, mt: 2 }}>
-                                תרחיש שני
-                            </Typography>
-                            <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
-                                {report.scenarios.scenario_2}
-                            </Typography>
-                        </Box>
-                    </Stack>
-                </AccordionDetails>
-            </Accordion>
-
-            {/* Dialog for Editing the report */}
-            <EditReportDialog
-                open={editOpen}
-                onClose={handleEditClose}
-                report={report}
-                onUpdate={handleUpdate}
-            />
-        </>
+        <Accordion sx={{ marginBottom: 2, border: '1px solid #ccc', textAlign: 'right' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <ReportItemSummary
+                    reportType={report.reportType}
+                    battalionName={report.battalionName}
+                    platoonSymbol={report.platoonSymbol}
+                    date={report.date}
+                />
+            </AccordionSummary>
+            <AccordionDetails>
+                <Box sx={{ textAlign: 'right' }}>
+                    <Grades
+                        grade1={grades.grade1}
+                        grade2={grades.grade2}
+                        onEditGrade={handleEditGrade}
+                        onAddGrade={handleAddGrade}
+                    />
+                    <Scenarios
+                        scenario1={scenarios.scenario1}
+                        scenario2={scenarios.scenario2}
+                        onEditScenario={handleEditScenario}
+                        onAddScenario={handleAddScenario}
+                    />
+                </Box>
+            </AccordionDetails>
+        </Accordion>
     );
 };
 
