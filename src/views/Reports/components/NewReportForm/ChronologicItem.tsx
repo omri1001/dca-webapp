@@ -8,13 +8,17 @@ import {
     Tooltip,
     IconButton,
 } from '@mui/material';
-// Eye icons
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
-import { Item, ItemValue } from './questionsModel';
+import { Item, ItemValue, ExtraSubItem, ExtraGroup } from './questionsModel';
 import TrafficMethod from './TrafficMethod';
 import BinaryMethod from './BinaryMethod';
+
+// Helper: Determine if a value is a single ExtraSubItem (leaf) versus a group of sub–items.
+function isExtraSubItem(value: ExtraSubItem | ExtraGroup): value is ExtraSubItem {
+    return (value as ExtraSubItem).type !== undefined;
+}
 
 export interface ChronologicItemProps {
     partIndex: number;
@@ -27,10 +31,32 @@ export interface ChronologicItemProps {
     ) => void;
     handleItemSelected?: () => void;
     handleItemReopen?: () => void;
+    // Handler for extra (sub–item) answers
+    handleExtraAnswer?: (
+        partIndex: number,
+        itemIndex: number,
+        extraKey: string,
+        answer: any
+    ) => void;
 }
 
 const defaultTrafficText = { full: 'קרה', half: 'חלקי', none: 'לא קרה' };
 const defaultBinaryText = { full: 'קרה', none: 'לא קרה' };
+
+const answerBoxStyles = {
+    width: '100%',
+    p: 2,
+    mt: 1,
+    fontSize: {
+        xs: '1rem',
+        sm: '1.1rem',
+        md: '1.2rem',
+        lg: '1.3rem',
+    },
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+};
 
 const ChronologicItem: React.FC<ChronologicItemProps> = ({
                                                              partIndex,
@@ -39,14 +65,24 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
                                                              handleItemChoice,
                                                              handleItemSelected,
                                                              handleItemReopen,
+                                                             handleExtraAnswer,
                                                          }) => {
     const [isRelevant, setIsRelevant] = useState(item.value !== 'notRelevant');
     const [selectedMode, setSelectedMode] = useState(false);
+    const [majorOpen, setMajorOpen] = useState<Record<string, boolean>>({});
+    const [subOpen, setSubOpen] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
-        // Keep isRelevant in sync with item.value
         setIsRelevant(item.value !== 'notRelevant');
-    }, [item.value]);
+        if (item.extra) {
+            // Default each major group to open
+            const defaults: Record<string, boolean> = {};
+            Object.keys(item.extra).forEach((key) => {
+                defaults[key] = true;
+            });
+            setMajorOpen(defaults);
+        }
+    }, [item.value, item.extra]);
 
     const toggleRelevant = () => {
         if (isRelevant) {
@@ -70,16 +106,17 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
         handleItemReopen?.();
     };
 
-    // Tooltip includes question number, part, and category
     const tooltipContent = `Part: ${item.part} | Category: ${item.category} | שאלה ${item.questionNumber}`;
 
-    // Get label (e.g. "קרה") for the selected value
     const getChosenAnswerLabel = (): string => {
-        if (item.value === 'full' || item.value === 'half' || item.value === 'none') {
+        if (
+            item.value === 'full' ||
+            item.value === 'half' ||
+            item.value === 'none'
+        ) {
             const answerText =
                 item.answerText ??
                 (item.type === 'binary' ? defaultBinaryText : defaultTrafficText);
-
             switch (item.value) {
                 case 'full':
                     return answerText.full;
@@ -92,18 +129,187 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
         return '';
     };
 
-    // Responsive font for item name
     const questionLabelStyles = {
-        fontSize: {
-            xs: '1.4rem',
-            sm: '1.6rem',
-            md: '1.8rem',
-            lg: '2rem',
-        },
+        fontSize: { xs: '1.4rem', sm: '1.6rem', md: '1.8rem', lg: '2rem' },
         fontWeight: 500,
     };
 
     const chosenAnswerLabel = getChosenAnswerLabel();
+
+    // For extra answers, if available, assume item.value holds an object.
+    const currentExtraAnswers =
+        item.extra && item.value && typeof item.value === 'object'
+            ? (item.value as Record<string, any>)
+            : {};
+
+    const toggleMajor = (majorKey: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setMajorOpen((prev) => ({ ...prev, [majorKey]: !prev[majorKey] }));
+    };
+
+    const toggleSubItem = (combinedKey: string, e: React.MouseEvent) => {
+        e.stopPropagation();
+        setSubOpen((prev) => ({ ...prev, [combinedKey]: !prev[combinedKey] }));
+    };
+
+    // Render the answer buttons for a sub–item.
+    const renderButtonGroup = (
+        combinedKey: string,
+        subItem: ExtraSubItem,
+        currentValue: string | null | undefined
+    ) => {
+        switch (subItem.type) {
+            case 'trafficLight':
+                return (
+                    <Box sx={answerBoxStyles}>
+                        <TrafficMethod
+                            selectedValue={currentValue}
+                            onSelectAnswer={(value) => {
+                                handleExtraAnswer?.(partIndex, itemIndex, combinedKey, value);
+                            }}
+                            answerText={subItem.answerText}
+                        />
+                    </Box>
+                );
+            case 'binary':
+                return (
+                    <Box sx={answerBoxStyles}>
+                        <BinaryMethod
+                            selectedValue={currentValue}
+                            onSelectAnswer={(value) => {
+                                handleExtraAnswer?.(partIndex, itemIndex, combinedKey, value);
+                            }}
+                            answerText={subItem.answerText}
+                        />
+                    </Box>
+                );
+            default:
+                return null;
+        }
+    };
+
+    // Render the complete extra structure (major groups and sub–items)
+    const renderExtraContent = () => {
+        if (!item.extra) return null;
+        return Object.keys(item.extra).map((majorKey) => {
+            const extraData = item.extra![majorKey];
+            if (isExtraSubItem(extraData)) {
+                // Single extra sub–item
+                const currentValue = currentExtraAnswers[majorKey];
+                return (
+                    <Box key={majorKey} sx={{ mt: 2 }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                                cursor: 'pointer',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    fontSize: { xs: '1.3rem', sm: '1.4rem', md: '1.5rem', lg: '1.6rem' },
+                                    fontWeight: 500,
+                                    textAlign: 'right',
+                                }}
+                            >
+                                {majorKey}
+                            </Typography>
+                            <IconButton
+                                sx={{ color: '#ff69b4' }}
+                                onClick={(e) => toggleMajor(majorKey, e)}
+                            >
+                                {majorOpen[majorKey] ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                            </IconButton>
+                        </Box>
+                        <Collapse in={majorOpen[majorKey]} unmountOnExit>
+                            <Box sx={{ ml: 3, mt: 1 }}>
+                                {renderButtonGroup(majorKey, extraData as ExtraSubItem, currentValue)}
+                            </Box>
+                        </Collapse>
+                    </Box>
+                );
+            } else {
+                // extraData is a group of sub–items
+                const groupData = extraData as ExtraGroup;
+                return (
+                    <Box key={majorKey} sx={{ mt: 2 }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 2,
+                                cursor: 'pointer',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    fontSize: { xs: '1.3rem', sm: '1.4rem', md: '1.5rem', lg: '1.6rem' },
+                                    fontWeight: 500,
+                                    textAlign: 'right',
+                                }}
+                            >
+                                {majorKey}
+                            </Typography>
+                            <IconButton
+                                sx={{ color: '#ff69b4' }}
+                                onClick={(e) => toggleMajor(majorKey, e)}
+                            >
+                                {majorOpen[majorKey] ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                            </IconButton>
+                        </Box>
+                        <Collapse in={majorOpen[majorKey]} unmountOnExit>
+                            <Box sx={{ ml: 3, mt: 1 }}>
+                                {Object.keys(groupData).map((subKey) => {
+                                    const combinedKey = `${majorKey}.${subKey}`;
+                                    const currentValue = currentExtraAnswers[combinedKey];
+                                    return (
+                                        <Box key={combinedKey} sx={{ mt: 2, ml: 3 }}>
+                                            <Box
+                                                sx={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: 2,
+                                                    cursor: 'pointer',
+                                                }}
+                                                onClick={(e) => e.stopPropagation()}
+                                            >
+                                                <Typography
+                                                    variant="body1"
+                                                    sx={{
+                                                        fontSize: { xs: '1.2rem', sm: '1.3rem', md: '1.4rem', lg: '1.5rem' },
+                                                        fontWeight: 400,
+                                                        textAlign: 'right',
+                                                    }}
+                                                >
+                                                    {subKey}
+                                                </Typography>
+                                                <IconButton
+                                                    sx={{ color: '#9c27b0' }}
+                                                    onClick={(e) => toggleSubItem(combinedKey, e)}
+                                                >
+                                                    {subOpen[combinedKey] ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                                                </IconButton>
+                                            </Box>
+                                            <Collapse in={subOpen[combinedKey]} unmountOnExit>
+                                                <Box sx={{ ml: 4, mt: 1 }}>
+                                                    {renderButtonGroup(combinedKey, groupData[subKey], currentValue)}
+                                                </Box>
+                                            </Collapse>
+                                        </Box>
+                                    );
+                                })}
+                            </Box>
+                        </Collapse>
+                    </Box>
+                );
+            }
+        });
+    };
 
     return (
         <Tooltip title={tooltipContent} arrow>
@@ -113,13 +319,12 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
                     borderRadius: 2,
                     border: selectedMode ? '2px solid primary.main' : '2px solid #ccc',
                     overflow: 'hidden',
-                    direction: 'rtl',     // Important for RTL
-                    textAlign: 'right',   // Text is right-aligned
+                    direction: 'rtl',
+                    textAlign: 'right',
                 }}
             >
                 {/* HEADER */}
                 {!selectedMode ? (
-                    // ── Mode: NOT SELECTED ──────────────────────────
                     <Box
                         sx={{
                             py: 2,
@@ -128,30 +333,24 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
                             color: 'white',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'flex-start', // In RTL, "start" = right side
+                            justifyContent: 'flex-start',
                             gap: 2,
                         }}
                     >
-                        {/* 1) Item Name (RIGHTMOST) */}
                         <Typography variant="h6" sx={questionLabelStyles}>
                             {item.name}
                         </Typography>
-
-                        {/* 2) Eye Icon to the LEFT of the Name */}
                         <IconButton
                             onClick={toggleRelevant}
                             sx={{
                                 color: '#40E0D0',
-                                '&:hover': {
-                                    backgroundColor: 'rgba(64,224,208,0.15)',
-                                },
+                                '&:hover': { backgroundColor: 'rgba(64,224,208,0.15)' },
                             }}
                         >
                             {isRelevant ? <VisibilityIcon /> : <VisibilityOffIcon />}
                         </IconButton>
                     </Box>
                 ) : (
-                    // ── Mode: SELECTED ──────────────────────────────
                     <Box
                         sx={{
                             py: 2,
@@ -160,31 +359,21 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
                             color: 'white',
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'flex-start', // again "start" is right in RTL
+                            justifyContent: 'flex-start',
                             gap: 2,
                         }}
                     >
-                        {/* 1) Item Name (RIGHTMOST) */}
                         <Typography variant="h6" sx={questionLabelStyles}>
                             {item.name}
                         </Typography>
-
-                        {/* 2) "נשמר : ..." */}
                         <Typography
                             sx={{
                                 color: '#40E0D0',
-                                fontSize: {
-                                    xs: '1.2rem',
-                                    sm: '1.3rem',
-                                    md: '1.4rem',
-                                    lg: '1.5rem',
-                                },
+                                fontSize: { xs: '1.2rem', sm: '1.3rem', md: '1.4rem', lg: '1.5rem' },
                             }}
                         >
                             {`נשמר : ${chosenAnswerLabel}`}
                         </Typography>
-
-                        {/* 3) ערוך Button (LEFTMOST) */}
                         <Button
                             variant="outlined"
                             onClick={onReopenItem}
@@ -192,16 +381,8 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
                                 color: '#fff',
                                 borderColor: '#fff',
                                 textTransform: 'none',
-                                fontSize: {
-                                    xs: '1rem',
-                                    sm: '1.1rem',
-                                    md: '1.2rem',
-                                    lg: '1.3rem',
-                                },
-                                '&:hover': {
-                                    backgroundColor: 'rgba(255,255,255,0.1)',
-                                    borderColor: '#fff',
-                                },
+                                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem', lg: '1.3rem' },
+                                '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)', borderColor: '#fff' },
                             }}
                         >
                             ערוך
@@ -220,25 +401,27 @@ const ChronologicItem: React.FC<ChronologicItemProps> = ({
                             textAlign: 'right',
                         }}
                     >
-                        {/* Show answer buttons if not selected */}
-                        {!selectedMode && (
-                            <>
-                                {item.type === 'trafficLight' && (
-                                    <TrafficMethod
-                                        selectedValue={item.value}
-                                        onSelectAnswer={onSelectAnswer}
-                                        answerText={item.answerText ?? defaultTrafficText}
-                                    />
-                                )}
-
-                                {item.type === 'binary' && (
-                                    <BinaryMethod
-                                        selectedValue={item.value}
-                                        onSelectAnswer={onSelectAnswer}
-                                        answerText={item.answerText ?? defaultBinaryText}
-                                    />
-                                )}
-                            </>
+                        {item.extra ? (
+                            renderExtraContent()
+                        ) : (
+                            !selectedMode && (
+                                <>
+                                    {item.type === 'trafficLight' && (
+                                        <TrafficMethod
+                                            selectedValue={item.value}
+                                            onSelectAnswer={onSelectAnswer}
+                                            answerText={item.answerText ?? defaultTrafficText}
+                                        />
+                                    )}
+                                    {item.type === 'binary' && (
+                                        <BinaryMethod
+                                            selectedValue={item.value}
+                                            onSelectAnswer={onSelectAnswer}
+                                            answerText={item.answerText ?? defaultBinaryText}
+                                        />
+                                    )}
+                                </>
+                            )
                         )}
                     </Box>
                 </Collapse>

@@ -96,14 +96,18 @@ export function createDefaultParts(): Part[] {
     // Part 1 (questions with part: 1)
     parts[0].items.push(
         {
-            name: 'רואה מעריך ממליץ של מפקד הכוח הראשון באירוע בקשר',
-            type: 'binary',
+            name: '"רואה, מעריך, ממליץ" של מפקד הכוח הראשון באירוע בקשר',
+            type: 'trafficLight',
             value: null,
             active: false,
             part: 1,
             category: 'chronologic',
             questionNumber: 3,
-            answerText: { full: 'קרה', none: 'לא קרה' }
+            answerText: {
+                full: 'דיווח תקין',
+                half: 'דיווח שגוי',
+                none: 'לא דיווח'
+            }
         },
         {
             name: 'סיווג אירוע - הכרזה',
@@ -114,30 +118,34 @@ export function createDefaultParts(): Part[] {
             category: 'chronologic',
             questionNumber: 2,
             answerText: {
-                full: 'הכריז נכון ובאופן מיידי וחמ״ל העביר את ההכרזה',
-                half: 'הכרזה לא נכונה / חמ״ל לא העביר את ההכרזה בציר חמ״לים',
-                none: 'לא קרה בכלל / רמ״מ הכריז לאחר תחילת האירוע'
+                full: 'הכריז נכון',
+                half: 'הכריז לא נכון',
+                none: 'לא הכריז'
             }
         },
         {
-            name: 'חבירה של רמ״מ למדווח בשטח',
-            type: 'binary',
+            name: 'הגדרה של מי חובר וחבירה למדווח',
+            type: 'trafficLight',
             value: null,
             active: false,
             part: 1,
             category: 'chronologic',
             questionNumber: 5,
-            answerText: { full: 'קרה', none: 'לא קרה' }
+            answerText: {
+                full: 'הוגדר ובוצע חבירה',
+                half: 'לא הגדיר או לא בוצע חבירה',
+                none: 'לא הגדיר ולא בוצע חבירה'
+            }
         },
         {
-            name: 'דיווח סדור על האירוע (פנייה, מה קרה, איפה, מי, מתי, אויב וכוחותינו)',
+            name: 'הבהרת תמונת המצב בציר מפקדים וחמ״לים: (פנייה, מה קרה, איפה, מתי, אויב וכוחותינו)',
             type: 'trafficLight',
             value: null,
             active: false,
             part: 1,
             category: 'chronologic',
             questionNumber: 6,
-            answerText: { full: 'דיווח מלא', half: 'מידע חלקי', none: 'לא בוצע' }
+            answerText: { full: 'דיווח תקין', half: 'דיווח שגוי', none: 'לא דיווח' }
         }
     );
 
@@ -151,27 +159,27 @@ export function createDefaultParts(): Part[] {
             part: 2,
             category: 'chronologic',
             questionNumber: 1,
-            answerText: { full: 'קרה', none: 'לא קרה' }
+            answerText: { full: 'בוצע', none: 'לא בוצע' }
         },
         {
-            name: 'שימוש בפקל אופציות (אין פקל אופציות למעגלים פתוחים)',
-            type: 'binary',
+            name: 'מתן פקודות ומשימות להמשך ע״פ פק״ל אופציות (במעגל פתוח ע״פ סד״פ מעגל פתוח)',
+            type: 'trafficLight',
             value: null,
             active: false,
             part: 2,
             category: 'chronologic',
             questionNumber: 7,
-            answerText: { full: 'קרה', none: 'לא קרה' }
+            answerText: { full: 'דיווח תקין', half: 'דיווח שגוי', none: 'לא דיווח' }
         },
         {
-            name: 'שימוש במשואה ובמשיבי מיקום',
+            name: 'שימוש במשואה ובמשיבי מיקום - כלל המפקדים',
             type: 'trafficLight',
             value: null,
             active: false,
             part: 2,
             category: 'chronologic',
             questionNumber: 8,
-            answerText: { full: 'כלל המפקדים משתמשים', half: 'רק חמ״ל משתמש', none: 'לא משתמשים בכלל' }
+            answerText: { full: 'שימוש שוטף', half: 'חלקם השתמשו', none: 'לא השתמשו' }
         },
         {
             name: 'הצבת עתודה בנקודת תורפה הגזרתית',
@@ -181,84 +189,72 @@ export function createDefaultParts(): Part[] {
             part: 2,
             category: 'chronologic',
             questionNumber: 9,
-            answerText: { full: 'קרה', none: 'לא קרה' }
+            answerText: { full: 'בוצע', none: 'לא בוצע' }
         },
         {
-            name: 'חלוקה לכוחות ומשימות ופקודה סדורה בקשר',
+            name: 'חדרישה והפעלת תת תקיפה חטיבתית: מס"קר / זיק לברחנים',
             type: 'trafficLight',
             value: null,
             active: false,
             part: 2,
             category: 'chronologic',
             questionNumber: 10,
-            answerText: { full: 'קרה', half: 'חלקי', none: 'לא קרה' }
+            answerText: { full: 'נדרש ובוצע', half: 'לא נדרש או לא בוצע', none: 'לא נדרש ולא בוצע ' }
         },
         {
-            name: 'שמירה על ג"ג על פי התכנון',
-            type: 'binary',
+            name: 'חזרה לשגרה',
+            type: 'multipleChoice',
             value: null,
             active: false,
             part: 2,
             category: 'chronologic',
             questionNumber: 11,
-            answerText: { full: 'קרה', none: 'לא קרה' }
-        },
-        {
-            name: 'שימוש בפקל"ים של הכוח (מאג / נגב / מטאדור / לאו / מטול)',
-            type: 'trafficLight',
-            value: null,
-            active: false,
-            part: 2,
-            category: 'chronologic',
-            questionNumber: 12,
-            answerText: {
-                full: 'ממצים את כלל היכולות',
-                half: 'משתמשים בחלק',
-                none: 'לא משתמשים בכלל'
+            extra: {
+                'דיווח ירוק בעיניים ובצל״ם': {
+                    type: 'trafficLight',
+                    answerText: {
+                        full: 'נדרש ודווח תקין',
+                        half: 'נדרש ודווח שגוי',
+                        none: 'לא נדרש ולא דווח'
+                    }
+                },
+                'דיווח פצועים והרוגים (מה קרה, איפה, מתי, מי ומספר פצועים)': {
+                    type: 'trafficLight',
+                    answerText: {
+                        full: 'דיווח תקין',
+                        half: 'דיווח שגוי',
+                        none: 'לא עבר דיווח'
+                    }
+                },
+                'דרישה למסוק פינוי באירוע רב נפגעים': {
+                    type: 'binary',
+                    answerText: {
+                        full: 'בוצע',
+                        none: 'לא בצוע'
+                    }
+                },
+                'חלוקת גזרות סריקה ומתן דיווח סופי לרמה ממונה': {
+                    type: 'binary',
+                    answerText: {
+                        full: 'בוצע',
+                        none: 'לא בצוע'
+                    }
+                }
             }
-        }
+        },
+
     );
 
     // Part 3 (questions with part: 3)
     parts[2].items.push(
         {
-            name: 'שימוש ברבש"צ / כיתת כוננות באירוע ביישוב (צח״י)',
+            name: 'הפעלת כוחות ביטחון בישוב דרך הרבש"צ',
             type: 'binary',
             value: null,
             active: false,
             part: 3,
             category: 'chronologic',
             questionNumber: 4,
-            answerText: { full: 'קרה', none: 'לא קרה' }
-        },
-        {
-            name: 'שימוש בהפעלת תת תקיפה חטיבתית: מס"קר / זיק לברחנים',
-            type: 'binary',
-            value: null,
-            active: false,
-            part: 3,
-            category: 'chronologic',
-            questionNumber: 13,
-            answerText: { full: 'קרה', none: 'לא קרה' }
-        },
-        {
-            name: 'לבדוק אם אפשר להשתמש בבקסיות ובת תתקיפה בו״ז',
-            type: 'binary',
-            value: null,
-            active: false,
-            part: 3,
-            category: 'chronologic',
-            questionNumber: 14,
-            answerText: { full: 'קרה', none: 'לא קרה' }
-        },
-        {
-            name: 'שימוש בדרדר פינוי באירוע אר״ן',
-            type: 'binary',
-            value: null,
-            active: false,
-            part: 3,
-            category: 'chronologic',
-            questionNumber: 15,
             answerText: { full: 'קרה', none: 'לא קרה' }
         }
     );
@@ -268,81 +264,120 @@ export function createDefaultParts(): Part[] {
     // Part 1 (static questions)
     parts[0].items.push(
         {
-            name: 'איסוף נתונים מקצינים עוזרים מקצועיים',
+            name: 'איסוף נתונים מקצינים עוזרים מקצועיים וכוחות בן ארגוניים',
             type: 'multipleChoice',
             value: null,
             active: false,
             part: 1,
             category: 'static',
-            questionNumber: 3,
+            questionNumber: 1,
             extra: {
                 'תפקיד אגמ': {
                     // This top-level key has a group of sub–items:
-                    'קמ״ן': {
-                        type: 'trafficLight',
+                    'קצין אגם': {
+                        type: 'binary',
                         answerText: {
-                            full: 'נדרש ובוצע',
-                            half: 'נדרש ולא בוצע ',
-                            none: 'לא נדרש ולא בוצע'
+                            full: 'בוצע',
+                            none: 'לא בוצע'
                         }
                     },
                     'קמב״צית': {
-                        type: 'trafficLight',
+                        type: 'binary',
                         answerText: {
-                            full: 'נדרש ובוצע',
-                            half: 'נדרש ולא בוצע',
-                            none: 'לא נדרש ולא בוצע'
+                            full: 'בוצע',
+                            none: 'לא בוצע'
                         }
                     },
-                    'קצין אגם': {
-                        type: 'trafficLight',
+                    'קמ״ן': {
+                        type: 'binary',
                         answerText: {
-                            full: 'נדרש ובוצע',
-                            half: 'נדרש ולא בוצע',
-                            none: 'לא נדרש ולא בוצע '
+                            full: 'בוצע',
+                            none: 'לא בוצע'
                         }
                     }
                 },
                 'תפקיד שלישותי': {
                     // Another group of sub–items:
-                    'מפ״ם': {
-                        type: 'trafficLight',
+                    'מפ״ם/סמפ"ם': {
+                        type: 'binary',
                         answerText: {
-                            full: 'נדרש ובוצע',
-                            half: 'נדרש ולא בוצע',
-                            none: 'לא נדרש ולא בוצע'
+                            full: 'בוצע',
+                            none: 'לא בוצע'
                         }
                     },
                     'שלישות': {
-                        type: 'trafficLight',
+                        type: 'binary',
                         answerText: {
-                            full: 'נדרש ובוצע',
-                            half: 'נדרש ולא בוצע',
-                            none: 'לא נדרש ולא בוצע'
+                            full: 'בוצע',
+                            none: 'לא בוצע'
                         }
                     },
-                    'דוקטור': {
-                        type: 'trafficLight',
+                    'דוקטור / פראמדיק': {
+                        type: 'binary',
                         answerText: {
-                            full: 'נדרש ובוצע',
-                            half: 'נדרש ולא בוצע',
-                            none: 'לא נדרש ולא בוצע'
+                            full: 'בוצע',
+                            none: 'לא בוצע'
+                        }
+                    }
+                },
+                'כוחות בין ארגוניים': {
+                    // Another group of sub–items:
+                    'משטרת ישראל': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'בוצע',
+                            none: 'לא בוצע'
+                        }
+                    },
+                    'שירות הביטחון הכללי': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'בוצע',
+                            none: 'לא בוצע'
+                        }
+                    },
+                    'מוקד אזרחי': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'בוצע',
+                            none: 'לא בוצע'
+                        }
+                    },
+                    'קצין אגמ״ר': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'בוצע',
+                            none: 'לא בוצע'
                         }
                     }
                 }
             }
-        },
+        }
+
+
+    );
+
+    // Part 2 (static questions)
+    parts[1].items.push(
         {
-            name: 'איסוף נתונים מכוחות בין ארגוניים',
+            name: 'שימוש בחפ״ק מנהלה ות.פ',
             type: 'multipleChoice',
             value: null,
             active: false,
-            part: 1,
+            part: 2,
             category: 'static',
-            questionNumber: 4,
+            questionNumber: 3,
             extra: {
-                // Here each top-level key is a single sub–item (no second-level object).
-                'שירות': {
+                ' חסמים  (במידה והמפ״ם / סמפ״ם אינו מתרגל, אזי יש לדלג על הצהוב)': {
+                    type: 'trafficLight',
+                    answerText: {
+                        full: 'נדרש ובוצע',
+                        half: 'נדרש ולא בוצע',
+                        none: 'לא נדרש ולא בוצע'
+                    }
+
+                },
+                'נפ״ק (במידה והשלישה אינה מתרגלת, אזי יש לדלג על הצהוב)': {
                     type: 'trafficLight',
                     answerText: {
                         full: 'נדרש ובוצע',
@@ -350,111 +385,33 @@ export function createDefaultParts(): Part[] {
                         none: 'לא נדרש ולא בוצע'
                     }
                 },
-                'מג״ב': {
+                'תאג"ד (במידה והדוקטור / פראמדיק אינו מתרגל, אזי יש לדלג על הצהוב)': {
                     type: 'trafficLight',
                     answerText: {
-                        full: 'דרש ובוצע',
+                        full: 'נדרש ובוצע',
+                        half: 'נדרש ולא בוצע',
+                        none: 'לא נדרש ולא בוצע'
+                    }
+                },
+                'טנ״א': {
+                    type: 'trafficLight',
+                    answerText: {
+                        full: 'נדרש ובוצע',
+                        half: 'נדרש ולא בוצע',
+                        none: 'לא נדרש ולא בוצע'
+                    }
+                },
+                'גשש ': {
+                    type: 'trafficLight',
+                    answerText: {
+                        full: 'נדרש ובוצע',
                         half: 'נדרש ולא בוצע',
                         none: 'לא נדרש ולא בוצע'
                     }
                 }
             }
-        },
-        {
-            name: 'העברת מידע בציר מפקדים וחמ״לים (רמ״מ)',
-            type: 'multipleChoice',
-            value: null,
-            active: false,
-            part: 1,
-            category: 'static',
-            questionNumber: 6,
-            extra: {
-                'העברת מידע בציר מפקדים וחמ״לים': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'מעביר באופן שוטף מידע מדויק',
-                        half: 'מעביר לא באופן שוטף / מידע מוטעה',
-                        none: 'לא מעביר מידע'
-                    }
-                }
-            }
         }
-    );
 
-    // Part 2 (static questions)
-    parts[1].items.push(
-        {
-            name: 'שימוש בחפ״ק מנהלה לטובת חסמים, נפ״ק ונאפ״ל',
-            type: 'trafficLight',
-            value: null,
-            active: false,
-            part: 2,
-            category: 'static',
-            questionNumber: 1,
-            extra: {
-                'חסמים': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'דרש ובוצע',
-                        half: 'דרש ולא בוצע',
-                        none: 'לא דרש ולא בוצע'
-                    }
-                },
-                'נפ״ק': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'דרש ובוצע',
-                        half: 'דרש ולא בוצע',
-                        none: 'לא דרש ולא בוצע'
-                    }
-                },
-                'נקודת איסוף פצועים': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'דרש ובוצע',
-                        half: 'דרש ולא בוצע',
-                        none: 'לא דרש ולא בוצע'
-                    }
-                }
-            }
-        },
-        {
-            name: 'חבירה לת.פ (גשש, 18ג׳, טנ״א)',
-            type: 'trafficLight',
-            value: null,
-            active: false,
-            part: 2,
-            category: 'static',
-            questionNumber: 2,
-            answerText: {
-                full: 'קרה',
-                half: 'חלקי',
-                none: 'לא קרה'
-            },
-            extra: {
-                'גשש': {
-                    type: 'binary',
-                    answerText: {
-                        full: 'קרה',
-                        none: 'לא קרה'
-                    }
-                },
-                '18ג': {
-                    type: 'binary',
-                    answerText: {
-                        full: 'קרה',
-                        none: 'לא קרה'
-                    }
-                },
-                'טנ״א': {
-                    type: 'binary',
-                    answerText: {
-                        full: 'קרה',
-                        none: 'לא קרה'
-                    }
-                }
-            }
-        }
     );
 
     // Part 3 (static questions)
@@ -464,35 +421,63 @@ export function createDefaultParts(): Part[] {
             type: 'multipleChoice',
             value: null,
             active: false,
-            part: 3,
+            part: 1,
             category: 'static',
-            questionNumber: 5,
+            questionNumber: 1,
             extra: {
-                'תורן תצפית רלוונטית': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'שומש באופן ממצה',
-                        half: 'שומש באופן חלקי',
-                        none: 'לא שומש כלל'
+                'צבא': {
+                    // This top-level key has a group of sub–items:
+                    'תורן תצפית': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'הסתייע ומיצה',
+                            none: 'לא הסתייע'
+                        }
+                    },
+                    'בקרות איסוף יבשתי': {
+                        type: 'trafficLight',
+                        answerText: {
+                            full: 'נדרש ובוצע',
+                            half: 'נדרש ולא מיצה',
+                            none: 'לא נדרש'
+                        }
+                    },
+                    'מצלמות מרכיבי הגנה': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'דרש',
+                            none: 'לא דרש'
+                        }
                     }
                 },
-                'בק״סיות': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'דרש ושומש באופן ממצה',
-                        half: 'דרש ושומש באופן חלקי',
-                        none: 'לא נדרש ולא שומש'
-                    }
-                },
-                'צלמות מרכיבי הגנה (מכ״מ / ptz, / ״מרחב חכם״ (מצלמות עבירה ומצלמות הרכשה)': {
-                    type: 'trafficLight',
-                    answerText: {
-                        full: 'נדרש הכל',
-                        half: 'נדרש באופן חלקי',
-                        none: 'לא נדרש'
+                'ישוב': {
+                    // Another group of sub–items:
+                    'מכ״מ ומצלמות ptz ': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'דרש',
+                            none: 'לא דרש'
+                        }
+                    },
+                    'שימוש ״במרחב חכם״ (מצלמות עבירה ומצלמות הרכשה)': {
+                        type: 'binary',
+                        answerText: {
+                            full: 'דרש',
+                            none: 'לא דרש'
+                        }
                     }
                 }
             }
+        },
+        {
+            name: 'שימוש באמל״ח המגוון של הכוח (מאג / נגב / מטאדור / לאו / מטול)',
+            type: 'binary',
+            value: null,
+            active: false,
+            part: 3,
+            category: 'static',
+            questionNumber: 5,
+            answerText: { full: 'קרה', none: 'לא קרה' }
         }
     );
 

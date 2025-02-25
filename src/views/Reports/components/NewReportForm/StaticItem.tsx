@@ -205,10 +205,7 @@ const StaticItem: React.FC<StaticItemProps> = ({
                     </Typography>
 
                     {/* Eye icon => Green */}
-                    <IconButton
-                        sx={{ color: 'green' }} // Top-level item: green
-                        onClick={toggleItem}
-                    >
+                    <IconButton sx={{ color: 'green' }} onClick={toggleItem}>
                         {openItem ? <VisibilityIcon /> : <VisibilityOffIcon />}
                     </IconButton>
                 </Box>
@@ -217,8 +214,8 @@ const StaticItem: React.FC<StaticItemProps> = ({
             {/* ───── Item Content ───── */}
             <Collapse in={openItem} unmountOnExit timeout={300}>
                 <Box sx={{ mt: 2, textAlign: 'right' }}>
-                    {/* Iterate over top-level keys (major groups) */}
-                    {item.extra &&
+                    {item.extra ? (
+                        // Render extra groups/sub–items if provided
                         Object.keys(item.extra).map((majorKey) => {
                             const majorValue = item.extra![majorKey];
                             const isMajorGroupOpen = !!majorOpen[majorKey];
@@ -236,7 +233,6 @@ const StaticItem: React.FC<StaticItemProps> = ({
                                         }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        {/* Major group name */}
                                         <Typography
                                             variant="h6"
                                             sx={{
@@ -251,20 +247,17 @@ const StaticItem: React.FC<StaticItemProps> = ({
                                         >
                                             {majorKey}
                                         </Typography>
-
-                                        {/* Eye icon => Pink */}
                                         <IconButton
-                                            sx={{ color: '#ff69b4' }} // major group: pink
+                                            sx={{ color: '#ff69b4' }}
                                             onClick={(e) => toggleMajor(majorKey, e)}
                                         >
                                             {isMajorGroupOpen ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                         </IconButton>
                                     </Box>
 
-                                    {/* Major group content */}
                                     <Collapse in={isMajorGroupOpen} unmountOnExit>
                                         {isExtraSubItem(majorValue) ? (
-                                            // If it's a single ExtraSubItem
+                                            // Single ExtraSubItem case
                                             <Box sx={{ ml: 3, mt: 2 }}>
                                                 {renderButtonGroup(
                                                     majorValue,
@@ -273,7 +266,7 @@ const StaticItem: React.FC<StaticItemProps> = ({
                                                 )}
                                             </Box>
                                         ) : (
-                                            // If it's a group of sub–items
+                                            // Group of sub–items
                                             Object.keys(majorValue).map((subKey) => {
                                                 const subValue = (majorValue as ExtraGroup)[subKey];
                                                 const combinedKey = `${majorKey}.${subKey}`;
@@ -292,7 +285,6 @@ const StaticItem: React.FC<StaticItemProps> = ({
                                                             }}
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
-                                                            {/* Sub–item name */}
                                                             <Typography
                                                                 variant="body1"
                                                                 sx={{
@@ -307,16 +299,13 @@ const StaticItem: React.FC<StaticItemProps> = ({
                                                             >
                                                                 {subKey}
                                                             </Typography>
-
-                                                            {/* Eye icon => Purple */}
                                                             <IconButton
-                                                                sx={{ color: '#9c27b0' }} // sub–item: purple
+                                                                sx={{ color: '#9c27b0' }}
                                                                 onClick={(e) => toggleSubItem(combinedKey, e)}
                                                             >
                                                                 {isThisSubOpen ? <VisibilityIcon /> : <VisibilityOffIcon />}
                                                             </IconButton>
                                                         </Box>
-
                                                         <Collapse in={isThisSubOpen} unmountOnExit>
                                                             <Box sx={{ mt: 1, ml: 4 }}>
                                                                 {isExtraSubItem(subValue) &&
@@ -330,7 +319,17 @@ const StaticItem: React.FC<StaticItemProps> = ({
                                     </Collapse>
                                 </Box>
                             );
-                        })}
+                        })
+                    ) : item.answerText ? (
+                        // Render a single button group directly if no extra is provided.
+                        <Box sx={{ ml: 3, mt: 2 }}>
+                            {item.type === 'trafficLight'
+                                ? renderTrafficLightButtons(item.name, item.value, item.answerText)
+                                : item.type === 'binary'
+                                    ? renderBinaryButtons(item.name, item.value, item.answerText)
+                                    : null}
+                        </Box>
+                    ) : null}
                 </Box>
             </Collapse>
         </Box>
@@ -338,6 +337,3 @@ const StaticItem: React.FC<StaticItemProps> = ({
 };
 
 export default StaticItem;
-
-
-

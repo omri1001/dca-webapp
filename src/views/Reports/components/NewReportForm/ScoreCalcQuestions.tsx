@@ -1,9 +1,10 @@
-// ScoreCalcQuestions.tsx
+//scoreCalcQuestions
+
 import React, { useState, useEffect, useMemo } from 'react';
-import { Grid, Typography, Box } from '@mui/material';
+import { Grid, Typography, Box, TextField } from '@mui/material';
 import { Part, Item } from './questionsModel';
 import ChronologicItem from './ChronologicItem';
-import StaticItem from './StaticItem.tsx';
+import StaticItem from './StaticItem';
 
 interface ChronologicItemData {
     partIndex: number;
@@ -20,25 +21,25 @@ interface ScoreCalcQuestionsProps {
         extraKey: string,
         answer: any
     ) => void;
+    duatz: number;
+    setDuatz: React.Dispatch<React.SetStateAction<number>>;
 }
 
 export default function ScoreCalcQuestions({
                                                parts,
                                                handleItemChoice,
                                                handleExtraAnswer,
+                                               duatz,
+                                               setDuatz,
                                            }: ScoreCalcQuestionsProps) {
-    // Store all chronologic items in one array.
     const [chronologicItems, setChronologicItems] = useState<ChronologicItemData[]>([]);
     const [staticItems, setStaticItems] = useState<{ partIndex: number; itemIndex: number; item: Item }[]>([]);
-
-    // This state will hold the keys (unique identifiers) of answered items in the order they were selected.
     const [selectedOrder, setSelectedOrder] = useState<string[]>([]);
 
-    // Helper to generate a unique key for each chronologic item.
     const getKey = (partIndex: number, itemIndex: number) =>
         `chronologic-${partIndex}-${itemIndex}`;
 
-    // On mount, build the arrays of items.
+    // Build arrays of items on mount
     useEffect(() => {
         const cItems: ChronologicItemData[] = [];
         const sItems: { partIndex: number; itemIndex: number; item: Item }[] = [];
@@ -53,13 +54,12 @@ export default function ScoreCalcQuestions({
             });
         });
 
-        // Initially, sort chronologic items by question number.
         cItems.sort((a, b) => a.item.questionNumber - b.item.questionNumber);
         setChronologicItems(cItems);
         setStaticItems(sItems);
     }, [parts]);
 
-    // When an answer is selected, add its key to the selectedOrder array (if not already added).
+    // Track answered item order
     const handleItemSelected = (partIndex: number, itemIndex: number) => {
         const key = getKey(partIndex, itemIndex);
         setSelectedOrder((prev) => {
@@ -70,15 +70,12 @@ export default function ScoreCalcQuestions({
         });
     };
 
-    // When an item is reopened, remove its key from the selectedOrder.
     const handleItemReopen = (partIndex: number, itemIndex: number) => {
         const key = getKey(partIndex, itemIndex);
         setSelectedOrder((prev) => prev.filter((k) => k !== key));
     };
 
-    // Compute the sorted list:
-    // - Open items (keys not in selectedOrder) are sorted by question number.
-    // - Answered items (keys in selectedOrder) are sorted by their index in selectedOrder.
+    // Sort items: open items by questionNumber, answered items by selection order
     const sortedChronologicItems = useMemo(() => {
         const openItems = chronologicItems.filter(
             (entry) => !selectedOrder.includes(getKey(entry.partIndex, entry.itemIndex))
@@ -99,7 +96,7 @@ export default function ScoreCalcQuestions({
 
     return (
         <Grid container spacing={4} alignItems="stretch">
-            {/* Left Column: Chronologic Items (50% width on md and up) */}
+            {/* Left Column: Chronologic Items */}
             <Grid item xs={12} md={6}>
                 <Box
                     sx={{
@@ -120,17 +117,17 @@ export default function ScoreCalcQuestions({
                             handleItemChoice={handleItemChoice}
                             handleItemSelected={() => handleItemSelected(partIndex, itemIndex)}
                             handleItemReopen={() => handleItemReopen(partIndex, itemIndex)}
+                            handleExtraAnswer={handleExtraAnswer}
                         />
                     ))}
                 </Box>
             </Grid>
 
-            {/* Right Column: Static Items (50% width on md and up) */}
+            {/* Right Column: Static Items + "דו״צ" Field */}
             <Grid item xs={12} md={6}>
                 <Box
                     sx={{
                         textAlign: 'right',
-                        // Change alignment to "stretch" so the static items fill the column width.
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'stretch',
@@ -149,8 +146,46 @@ export default function ScoreCalcQuestions({
                             handleExtraAnswer={handleExtraAnswer}
                         />
                     ))}
+
+                    {/* New Field for "דו״צ" */}
+                    <Box sx={{ mt: 2, textAlign: 'right', direction: 'rtl' }}>
+                        {/* Label above the field */}
+                        <Typography
+                            variant="h6"
+                            sx={{ fontSize: '1.4rem', mb: 1, textAlign: 'right' }}
+                        >
+                            דו״צ
+                        </Typography>
+
+                        <TextField
+                            type="number"
+                            value={duatz}
+                            onChange={(e) => {
+                                const value = Number(e.target.value);
+                                if (value >= 0 && value <= 10) {
+                                    setDuatz(value);
+                                }
+                            }}
+                            inputProps={{ min: 0, max: 10 }}
+                            variant="outlined"
+                            fullWidth
+                            helperText="האם היו אירועי דוצ בתרגיל? אם כן ציין כמה"
+                            sx={{
+                                '& .MuiInputBase-input': {
+                                    fontSize: '1.4rem',
+                                    textAlign: 'right',
+                                },
+                                '& .MuiFormHelperText-root': {
+                                    fontSize: '1.2rem',
+                                    textAlign: 'right',
+                                },
+                            }}
+                        />
+                    </Box>
                 </Box>
             </Grid>
         </Grid>
     );
 }
+
+
