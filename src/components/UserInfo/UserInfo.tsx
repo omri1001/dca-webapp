@@ -18,7 +18,7 @@ interface UserInfoProps {
 const UserInfo = ({ showAvatar = false, user, ...restOfProps }: UserInfoProps) => {
   const fullName = user?.displayName || [user?.nameFirst || '', user?.nameLast || ''].join(' ').trim();
   const srcAvatar = user?.avatarUrl ? user?.avatarUrl : undefined;
-  const userPhoneOrEmail = (user?.phone as string) || (user?.email as string);
+
 
   return (
     <Stack alignItems="center" minHeight="fit-content" marginBottom={2} {...restOfProps}>

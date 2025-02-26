@@ -1,57 +1,70 @@
-import { ComponentType, FunctionComponent, SVGAttributes } from 'react';
+import { ComponentType, FunctionComponent } from 'react';
 import { APP_ICON_SIZE } from '@/components/config';
 import { IconName, ICONS } from './config';
 
-export interface AppIconProps extends SVGAttributes<SVGElement> {
-  color?: string;
-  icon: IconName;
-  size?: string | number;
-  title?: string;
+// Extend the icon names to include the PNG case.
+export type ExtendedIconName = IconName | "dca_logo_png";
+
+interface CommonProps {
+    icon: ExtendedIconName;
+    color?: string;
+    size?: string | number;
+    title?: string;
 }
 
-const AppIcon: FunctionComponent<AppIconProps> = ({
-                                                    color,
-                                                    icon,
-                                                    size = APP_ICON_SIZE,
-                                                    style,
-                                                    ...restOfProps
-                                                  }) => {
-  // 1) If icon is "dca_logo_png", render the PNG
-  if (icon === 'dca_logo_png') {
-    return (
-        <img
-            src="/img/favicon/dca_logo.png"
-            alt="DCA Logo"
-            // Let size control the width/height
-            style={{
-              ...style,
-              width: size,
-              height: size,
-              objectFit: 'contain', // optional, keeps aspect ratio
-            }}
-            {...restOfProps}
-        />
-    );
-  }
+// When icon is "dca_logo_png", we expect image attributes.
+type AppIconImgProps = CommonProps &
+    React.ImgHTMLAttributes<HTMLImageElement> & {
+    icon: "dca_logo_png";
+};
 
-  // 2) Otherwise, fall back to the usual SVG logic
-  let ComponentToRender: ComponentType = ICONS[icon];
-  if (!ComponentToRender) {
-    console.warn(`AppIcon: icon "${icon}" not found!`);
-    ComponentToRender = ICONS.default;
-  }
+// For any other icon, we use SVG attributes.
+type AppIconSVGProps = CommonProps &
+    React.SVGProps<SVGSVGElement> & {
+    icon: Exclude<ExtendedIconName, "dca_logo_png">;
+};
 
-  const propsToRender = {
-    height: size,
-    width: size,
-    color,
-    fill: color && 'currentColor', // If color is set, fill the icon with 'currentColor'
-    size,
-    style: { ...style, color },
-    ...restOfProps,
-  };
+export type AppIconProps = AppIconImgProps | AppIconSVGProps;
 
-  return <ComponentToRender data-icon={icon} {...propsToRender} />;
+const AppIcon: FunctionComponent<AppIconProps> = (props) => {
+    const { color, icon, size = APP_ICON_SIZE, style, ...restOfProps } = props;
+
+    // Render the PNG if the icon is "dca_logo_png"
+    if (icon === "dca_logo_png") {
+        // Assert that restOfProps are valid image props.
+        const imgProps = restOfProps as React.ImgHTMLAttributes<HTMLImageElement>;
+        return (
+            <img
+                src="/img/favicon/dca_logo.png"
+                alt="DCA Logo"
+                style={{
+                    ...style,
+                    width: size,
+                    height: size,
+                    objectFit: 'contain', // Keeps aspect ratio
+                }}
+                {...imgProps}
+            />
+        );
+    }
+
+    // Otherwise, render the corresponding SVG.
+    let ComponentToRender: ComponentType = ICONS[icon];
+    if (!ComponentToRender) {
+        console.warn(`AppIcon: icon "${icon}" not found!`);
+        ComponentToRender = ICONS.default;
+    }
+
+    const svgProps = {
+        height: size,
+        width: size,
+        color,
+        fill: color ? 'currentColor' : undefined,
+        style: { ...style, color },
+        ...restOfProps,
+    };
+
+    return <ComponentToRender data-icon={icon} {...svgProps} />;
 };
 
 export default AppIcon;

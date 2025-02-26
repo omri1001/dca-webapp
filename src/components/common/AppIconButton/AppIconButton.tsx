@@ -67,7 +67,7 @@ const AppIconButton: FunctionComponent<AppIconButtonProps> = ({
             sx={sxToRender}
             {...restOfProps}
         >
-          {icon === 'dca_logo_png' ? (
+          {icon === 'logo' ? (
               // --- Use your PNG instead of AppIcon ---
               <img
                   src="/img/favicon/dca_logo.png"

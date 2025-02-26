@@ -1,0 +1,14 @@
+services:
+  frontend:
+    build: .           # קונטקסט בנייה לקוד ה-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./server   # קוד ה-backend נמצא בתיקיית server
+      dockerfile: Dockerfile  # קובץ Dockerfile של ה-backend נמצא בתיקייה server
+    ports:
+      - "3001:3001"

@@ -51,4 +51,5 @@ export const ICONS /* Note: Setting type disables property autocomplete :( was -
   logout: ExitToAppIcon,
   notifications: NotificationsIcon,
   error: DangerousIcon,
+
 };
