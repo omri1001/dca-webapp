@@ -1,3 +1,4 @@
+//ScoreCalcForm
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 
@@ -20,13 +21,18 @@ const ScoreCalcForm: React.FC<ScoreCalcFormProps> = ({ onDataChange }) => {
 
     // Recalculate final grade on any change.
     useEffect(() => {
-        const computedGrade = parts.reduce(
-            (acc, part) => acc + computePartScore(part),
+        // Calculate the grade for each part.
+        const partsWithGrades = parts.map((part) => ({
+            ...part,
+            grade: computePartScore(part)
+        }));
+        // Compute final grade based on the new parts data.
+        const computedGrade = partsWithGrades.reduce(
+            (acc, part) => acc + part.grade,
             0
         );
-        // Subtract (duatz * 5) from the computed grade.
         const finalGrade = computedGrade - duatz * 5;
-        onDataChange({ parts, finalGrade });
+        onDataChange({ parts: partsWithGrades, finalGrade });
     }, [parts, duatz, onDataChange]);
 
     // Handler for chronologic items.

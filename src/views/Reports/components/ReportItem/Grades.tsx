@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Box, Typography, Button, Collapse, IconButton } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import GradePartGraphs from './GradePartGraphs';
 
 interface GradeItem {
     name: string;
@@ -33,6 +34,7 @@ interface GradesProps {
 
 const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade }) => {
     const [expanded, setExpanded] = useState(false);
+
 
     const hasGrade = (grade: GradeItem) => {
         if (!grade || !grade.scoreData) return false;
@@ -109,7 +111,6 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade
             <Typography variant="h6" sx={{ mb: 1 }}>
                 מדדים
             </Typography>
-
             {/* Grade 1 Header */}
             <Box sx={{ mb: 2 }}>
                 <Typography variant="body1">
@@ -128,7 +129,6 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade
                     {hasGrade(grade1) ? 'ערוך מדד' : 'הוסף מדד'}
                 </Button>
             </Box>
-
             {/* Grade 2 Header */}
             <Box sx={{ mb: 2 }}>
                 <Typography variant="body1">
@@ -147,7 +147,6 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade
                     {hasGrade(grade2) ? 'ערוך מדד' : 'הוסף מדד'}
                 </Button>
             </Box>
-
             {/* Toggle Arrow */}
             <Box
                 sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mt: 1, textAlign: 'right' }}
@@ -168,20 +167,25 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade
                     </Typography>
                 )}
             </Box>
-
-            {/* Collapse for detailed metrics */}
+            {/* Collapse for detailed metrics and graphs */}
             <Collapse in={expanded}>
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
                         פרטי מדד 1
                     </Typography>
                     {renderGradeColumns(grade1)}
+                    {/* Render the detailed 3‑column graphs for each part of Grade 1 */}
+                    <GradePartGraphs scoreData={grade1.scoreData} />
                 </Box>
                 <Box sx={{ mb: 2 }}>
                     <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
                         פרטי מדד 2
                     </Typography>
                     {renderGradeColumns(grade2)}
+                    {/* If grade2 has parts, you can also show its graphs */}
+                    {grade2.scoreData.parts.length > 0 && (
+                        <GradePartGraphs scoreData={grade2.scoreData} />
+                    )}
                 </Box>
             </Collapse>
         </Box>
