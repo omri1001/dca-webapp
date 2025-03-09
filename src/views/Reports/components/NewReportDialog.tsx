@@ -22,13 +22,15 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
 
     // --- Step 1: Basic Info ---
     const [reportType, setReportType] = useState<'' | 'פלוגה' | 'גדוד'>('');
-    const [battalionName, setBattalionName] = useState('');
-    const [platoonSymbol, setPlatoonSymbol] = useState('');
+    const [gdod, setGdod] = useState('');
+    const [pluga, setPluga] = useState('');
     const [date, setDate] = useState('');
     const [mentorName, setMentorName] = useState('');
     const [exerciseManagerName, setExerciseManagerName] = useState('');
     const [gzera, setGzera] = useState('');
     const [mission, setMission] = useState('');
+    const [hativa, setHativa] = useState('');
+    const [hatmar, setHatmar] = useState('');
 
     // --- Follow‑up data ---
     const [gradeData1, setGradeData1] = useState<any>(null);
@@ -52,12 +54,14 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
 
             setStep(1);
             setReportType('');
-            setBattalionName('');
-            setPlatoonSymbol('');
+            setGdod('');
+            setPluga('');
             setMentorName('');
             setExerciseManagerName('');
             setGzera('');
             setMission('');
+            setHativa('');
+            setHatmar('');
             setGradeData1(null);
             setGradeData2(null);
             setScenarioData1(null);
@@ -74,8 +78,8 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
     const handleBasicInfoNext = () => {
         if (
             !reportType ||
-            !battalionName ||
-            (reportType === 'פלוגה' && !platoonSymbol) ||
+            !gdod ||
+            (reportType === 'פלוגה' && !pluga) ||
             !mentorName ||
             !exerciseManagerName ||
             !gzera ||
@@ -116,20 +120,27 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
 
     // Final submit
     const handleFinalSubmit = () => {
-        const primaryKey = `${battalionName}_${date}`;
+        // Build the primary key by joining non-empty fields with underscores.
+        // (Note: The order here is determined by your business logic.)
+        const primaryKey = [gdod, pluga, date, hativa, hatmar]
+            .filter(field => field.trim() !== '')
+            .join('_');
+
         const defaultGrade = { name: '', scoreData: { parts: [], finalGrade: 0 } };
         const defaultScenario = { scenarioText: '', scenarioUseAI: false };
 
         const payload = {
             primaryKey,
             reportType,
-            battalionName,
-            ...(reportType === 'פלוגה' && { platoonSymbol }),
+            gdod,
+            ...(reportType === 'פלוגה' && { pluga }),
             date,
             mentorName,
             exerciseManagerName,
-            map: gzera,
+            gzera,
             mission,
+            hativa,
+            hatmar,
             data: {
                 grades: {
                     grade1: gradeData1 || defaultGrade,
@@ -154,10 +165,10 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             <Step1BasicInfo
                 reportType={reportType}
                 setReportType={setReportType}
-                battalionName={battalionName}
-                setBattalionName={setBattalionName}
-                platoonSymbol={platoonSymbol}
-                setPlatoonSymbol={setPlatoonSymbol}
+                gdod={gdod}
+                setGdod={setGdod}
+                pluga={pluga}
+                setPluga={setPluga}
                 date={date}
                 setDate={setDate}
                 mentorName={mentorName}
@@ -168,6 +179,10 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
                 setGzera={setGzera}
                 mission={mission}
                 setMission={setMission}
+                hativa={hativa}
+                setHativa={setHativa}
+                hatmar={hatmar}
+                setHatmar={setHatmar}
                 onNext={handleBasicInfoNext}
             />
         );
@@ -176,20 +191,20 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             <Step2ChooseFollowup
                 // ---- Step1 data passed here:
                 reportType={reportType}
-                battalionName={battalionName}
-                platoonSymbol={platoonSymbol} // only used if דוח פלוגה
+                gdod={gdod}
+                pluga={pluga} // only used if דוח פלוגה
                 date={date}
                 mentorName={mentorName}
                 exerciseManagerName={exerciseManagerName}
                 gzera={gzera}
                 mission={mission}
-
+                hativa={hativa}
+                hatmar={hatmar}
                 // ---- Step2 existing data:
                 gradeData1={gradeData1}
                 gradeData2={gradeData2}
                 scenarioData1={scenarioData1}
                 scenarioData2={scenarioData2}
-
                 // ---- Callbacks:
                 onChooseFollowup={handleChooseFollowup}
                 onBack={() => setStep(1)}
@@ -213,7 +228,6 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             open={open}
             onClose={onClose}
             fullScreen
-            // Force the dialog itself into RTL
             sx={{
                 '& .MuiDialog-paper': {
                     direction: 'rtl',

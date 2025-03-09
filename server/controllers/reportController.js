@@ -1,5 +1,3 @@
-// server/controllers/reportController.js
-
 const Report = require('../models/Report');
 
 /**
@@ -19,7 +17,6 @@ exports.getAllReports = async (req, res) => {
  */
 exports.getReportByPrimaryKey = async (req, res) => {
     try {
-        // Note: We now use "primaryKey" (not "primary_key")
         const doc = await Report.findOne({ primaryKey: req.params.primaryKey });
         if (!doc) {
             return res.status(404).json({ success: false, error: 'Not found' });
@@ -31,36 +28,59 @@ exports.getReportByPrimaryKey = async (req, res) => {
 };
 
 /**
- * FILTER reports by freeText, battalionName, date
+ * FILTER reports by multiple criteria
  */
 exports.filterReports = async (req, res) => {
     try {
-        const { freeText, battalionName, date } = req.query;
+        const { freeText, gdod, pluga, gzera, mission, mentorName, date, hativa, hatmar } = req.query;
         const q = {};
+
+        // Free text search across multiple fields
         if (freeText && freeText.trim()) {
             q.$or = [
                 { primaryKey: { $regex: freeText, $options: 'i' } },
-                { battalionName: { $regex: freeText, $options: 'i' } },
-                // Now look for scenario text inside data.scenarios
+                { gdod: { $regex: freeText, $options: 'i' } },
+                { pluga: { $regex: freeText, $options: 'i' } },
+                { mentorName: { $regex: freeText, $options: 'i' } },
                 { 'data.scenarios.scenario1.scenarioText': { $regex: freeText, $options: 'i' } },
-                { 'data.scenarios.scenario2.scenarioText': { $regex: freeText, $options: 'i' } }
+                { 'data.scenarios.scenario2.scenarioText': { $regex: freeText, $options: 'i' } },
             ];
         }
-        if (battalionName) {
-            q.battalionName = { $regex: battalionName, $options: 'i' };
+
+        if (gdod) {
+            q.gdod = { $regex: gdod, $options: 'i' };
+        }
+        if (pluga) {
+            q.pluga = { $regex: pluga, $options: 'i' };
+        }
+        if (gzera) {
+            q.gzera = { $regex: gzera, $options: 'i' };
+        }
+        if (mission) {
+            q.mission = { $regex: mission, $options: 'i' };
+        }
+        if (mentorName) {
+            q.mentorName = { $regex: mentorName, $options: 'i' };
         }
         if (date) {
             q.date = date;
         }
+        if (hativa) {
+            q.hativa = { $regex: hativa, $options: 'i' };
+        }
+        if (hatmar) {
+            q.hatmar = { $regex: hatmar, $options: 'i' };
+        }
+
         const reports = await Report.find(q);
         return res.json({ success: true, data: reports });
     } catch (err) {
         return res.status(500).json({ success: false, error: 'Server error' });
     }
 };
+
 /**
  * CREATE a new report.
- * (Any numeric objects such as { $numberInt: "x" } or { $numberDouble: "y" } are parsed)
  */
 exports.createReport = async (req, res) => {
     try {
@@ -92,25 +112,16 @@ exports.updateReport = async (req, res) => {
     }
 };
 
-/**
- * Helper: Convert any { $numberInt: "x" } or { $numberDouble: "y" }
- * objects into real JS numbers so that Mongoose accepts them.
- */
 function parseNumbers(originalBody) {
-    // Deep clone the object to ensure we can traverse it
     const body = JSON.parse(JSON.stringify(originalBody));
-
-    // For nested fields under "data" (for example, grades), convert any numbers
     if (body.data && typeof body.data === 'object') {
         if (body.data.grades && typeof body.data.grades === 'object') {
             for (const categoryKey of Object.keys(body.data.grades)) {
                 const cat = body.data.grades[categoryKey];
                 if (!cat) continue;
-                // Convert "average" if needed
                 if (cat.average && typeof cat.average === 'object') {
                     cat.average = convertToNumber(cat.average);
                 }
-                // Convert each "item" if needed
                 if (cat.items && typeof cat.items === 'object') {
                     for (const itemKey of Object.keys(cat.items)) {
                         cat.items[itemKey] = convertToNumber(cat.items[itemKey]);

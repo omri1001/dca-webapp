@@ -1,5 +1,3 @@
-// src/views/Reports/CombatReports.tsx
-
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import RightFilterSideBar from './components/RightFilterSideBar';
@@ -8,8 +6,14 @@ import NewReportDialog from './components/NewReportDialog';
 
 interface FilterState {
     freeText?: string;
-    forceName?: string;
+    gdod?: string;
+    pluga?: string;
+    gzera?: string;
+    mission?: string;
+    mentorName?: string;
     date?: string;
+    hativa?: string;
+    hatmar?: string;
 }
 
 const CombatReports: React.FC = () => {
@@ -18,12 +22,17 @@ const CombatReports: React.FC = () => {
     const [currentFilters, setCurrentFilters] = useState<FilterState>({});
     const [openNewReportDialog, setOpenNewReportDialog] = useState(false);
 
-    // Build query string
     const buildQueryString = (filters: FilterState): string => {
         const params = new URLSearchParams();
         if (filters.freeText) params.set('freeText', filters.freeText);
-        if (filters.forceName) params.set('forceName', filters.forceName);
+        if (filters.gdod) params.set('gdod', filters.gdod);
+        if (filters.pluga) params.set('pluga', filters.pluga);
+        if (filters.gzera) params.set('gzera', filters.gzera);
+        if (filters.mission) params.set('mission', filters.mission);
+        if (filters.mentorName) params.set('mentorName', filters.mentorName);
         if (filters.date) params.set('date', filters.date);
+        if (filters.hativa) params.set('hativa', filters.hativa);
+        if (filters.hatmar) params.set('hatmar', filters.hatmar);
         return params.toString();
     };
 
@@ -59,20 +68,21 @@ const CombatReports: React.FC = () => {
 
     const describeFilters = () => {
         const parts: string[] = [];
-        if (currentFilters.freeText)
-            parts.push(`טקסט חופשי: "${currentFilters.freeText}"`);
-        if (currentFilters.forceName)
-            parts.push(`מסגרת: "${currentFilters.forceName}"`);
+        if (currentFilters.freeText) parts.push(`טקסט חופשי: "${currentFilters.freeText}"`);
+        if (currentFilters.gdod) parts.push(`גדוד: "${currentFilters.gdod}"`);
+        if (currentFilters.pluga) parts.push(`פלוגה: "${currentFilters.pluga}"`);
+        if (currentFilters.gzera) parts.push(`גזרה: "${currentFilters.gzera}"`);
+        if (currentFilters.mission) parts.push(`משימה: "${currentFilters.mission}"`);
+        if (currentFilters.mentorName) parts.push(`חונך: "${currentFilters.mentorName}"`);
         if (currentFilters.date) parts.push(`תאריך: "${currentFilters.date}"`);
+        if (currentFilters.hativa) parts.push(`חטיבה: "${currentFilters.hativa}"`);
+        if (currentFilters.hatmar) parts.push(`חטיבה מרחבית: "${currentFilters.hatmar}"`);
         return parts.join(', ');
     };
 
     const handleOpenNewReportDialog = () => setOpenNewReportDialog(true);
     const handleCloseNewReportDialog = () => setOpenNewReportDialog(false);
 
-    // If you still want to handle final data from the new forms,
-    // you can do so in onSubmit, but we've removed the "שלח" button in the dialog,
-    // so you'd have to manually call onSubmit from inside ScoreCalcForm or TextTrainingForm if needed.
     const handleCreateNewReport = async (data: any) => {
         try {
             setError(null);
@@ -97,7 +107,7 @@ const CombatReports: React.FC = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            {/* Mock Top Bar */}
+            {/* Top Bar */}
             <Box
                 sx={{
                     height: '64px',
@@ -118,7 +128,7 @@ const CombatReports: React.FC = () => {
                     </Typography>
                     {Object.keys(currentFilters).length > 0 && (
                         <Typography variant="body2" sx={{ mb: 2, fontStyle: 'italic' }}>
-                            : {describeFilters() || '(none)'}
+                            {describeFilters() || '(none)'}
                         </Typography>
                     )}
 
@@ -135,9 +145,7 @@ const CombatReports: React.FC = () => {
                         </Typography>
                     )}
 
-                    {reports.length === 0 && !error && (
-                        <Typography>לא נמצאו דוחות</Typography>
-                    )}
+                    {reports.length === 0 && !error && <Typography>לא נמצאו דוחות</Typography>}
 
                     <Button
                         variant="contained"
@@ -148,7 +156,7 @@ const CombatReports: React.FC = () => {
                         הכנס דוח חדש
                     </Button>
 
-                    {/* Display existing reports */}
+                    {/* Render Report Items */}
                     {reports.map((report) => (
                         <ReportItem key={report._id} report={report} />
                     ))}
@@ -158,7 +166,7 @@ const CombatReports: React.FC = () => {
                 <RightFilterSideBar onFilter={handleFilter} currentFilters={currentFilters} />
             </Box>
 
-            {/* The new splitted dialog */}
+            {/* New Report Dialog */}
             <NewReportDialog
                 open={openNewReportDialog}
                 onClose={handleCloseNewReportDialog}

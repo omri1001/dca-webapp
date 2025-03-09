@@ -22,9 +22,11 @@ import {
 interface Step2ChooseFollowupProps {
     /** Step1 (basic info) data: */
     reportType: '' | 'פלוגה' | 'גדוד';
-    battalionName: string;
-    platoonSymbol?: string;
     date: string;
+    hatmar: string;
+    hativa: string;
+    gdod: string;
+    pluga?: string;
     mentorName: string;
     exerciseManagerName: string;
     gzera: string;
@@ -44,9 +46,11 @@ interface Step2ChooseFollowupProps {
 
 const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                                                      reportType,
-                                                                     battalionName,
-                                                                     platoonSymbol,
                                                                      date,
+                                                                     hatmar,
+                                                                     hativa,
+                                                                     gdod,
+                                                                     pluga,
                                                                      mentorName,
                                                                      exerciseManagerName,
                                                                      gzera,
@@ -93,12 +97,10 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                         <ListItemText
                                             primary={
                                                 <span>
-                          <strong>חלק {idx + 1}:</strong> {part.title || '(ללא כותרת)'}
-                        </span>
+                                                    <strong>חלק {idx + 1}:</strong> {part.title || '(ללא כותרת)'}
+                                                </span>
                                             }
-                                            secondary={`סוג: ${part.type || 'לא ידוע'}, ${
-                                                part.items.length
-                                            } פריטים`}
+                                            secondary={`סוג: ${part.type || 'לא ידוע'}, ${part.items.length} פריטים`}
                                         />
                                     </ListItem>
                                 ))}
@@ -146,46 +148,66 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                     </Typography>
 
                     <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                            <Typography>
-                                <strong>סוג דוח:</strong> {reportType || 'לא הוגדר'}
-                            </Typography>
-                        </Grid>
+                        {/* 1. תאריך */}
                         <Grid item xs={12} sm={6}>
                             <Typography>
                                 <strong>תאריך:</strong> {date || 'לא הוגדר'}
                             </Typography>
                         </Grid>
+                        {/* 2. סוג דוח */}
                         <Grid item xs={12} sm={6}>
                             <Typography>
-                                <strong>שם הגדוד:</strong> {battalionName || 'לא הוגדר'}
+                                <strong>סוג דוח:</strong> {reportType || 'לא הוגדר'}
                             </Typography>
                         </Grid>
+                        {/* 3. חטמר */}
+                        <Grid item xs={12} sm={6}>
+                            <Typography>
+                                <strong>חטמר:</strong> {hatmar || 'לא הוגדר'}
+                            </Typography>
+                        </Grid>
+                        {/* 4. חטיבה */}
+                        <Grid item xs={12} sm={6}>
+                            <Typography>
+                                <strong>חטיבה:</strong> {hativa || 'לא הוגדר'}
+                            </Typography>
+                        </Grid>
+                        {/* 5. שם גדוד */}
+                        <Grid item xs={12} sm={6}>
+                            <Typography>
+                                <strong>שם גדוד:</strong> {gdod || 'לא הוגדר'}
+                            </Typography>
+                        </Grid>
+                        {/* 6. אות פלוגה (only if report type is 'פלוגה') */}
                         {reportType === 'פלוגה' && (
                             <Grid item xs={12} sm={6}>
                                 <Typography>
-                                    <strong>אות פלוגה:</strong> {platoonSymbol || 'לא הוגדר'}
+                                    <strong>אות פלוגה:</strong> {pluga || 'לא הוגדר'}
                                 </Typography>
                             </Grid>
                         )}
-                        <Grid item xs={12} sm={6}>
-                            <Typography>
-                                <strong>שם חונך:</strong> {mentorName || 'לא הוגדר'}
-                            </Typography>
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                            <Typography>
-                                <strong>שם מנהל תרגיל:</strong> {exerciseManagerName || 'לא הוגדר'}
-                            </Typography>
-                        </Grid>
+                        {/* 7. גזרה */}
                         <Grid item xs={12} sm={6}>
                             <Typography>
                                 <strong>גזרה:</strong> {gzera || 'לא הוגדר'}
                             </Typography>
                         </Grid>
+                        {/* 8. משימה */}
                         <Grid item xs={12} sm={6}>
                             <Typography>
                                 <strong>משימה:</strong> {mission || 'לא הוגדר'}
+                            </Typography>
+                        </Grid>
+                        {/* 9. שם חונך */}
+                        <Grid item xs={12} sm={6}>
+                            <Typography>
+                                <strong>שם חונך:</strong> {mentorName || 'לא הוגדר'}
+                            </Typography>
+                        </Grid>
+                        {/* 10. שם מנהל תרגיל */}
+                        <Grid item xs={12} sm={6}>
+                            <Typography>
+                                <strong>שם מנהל תרגיל:</strong> {exerciseManagerName || 'לא הוגדר'}
                             </Typography>
                         </Grid>
                     </Grid>

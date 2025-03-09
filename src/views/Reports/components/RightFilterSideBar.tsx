@@ -1,5 +1,3 @@
-// src/components/RightFilterSideBar.tsx
-
 import React, { useState, useCallback } from 'react';
 import {
     Drawer,
@@ -8,64 +6,68 @@ import {
     Stack,
     TextField,
     Button,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Divider
+    Divider,
 } from '@mui/material';
 
 interface FilterState {
     freeText: string;
-    forceName: string;
+    gdod: string;
+    pluga: string;
+    gzera: string;
+    mission: string;
+    mentorName: string;
     date: string;
-    finalGrade: string;
-    finalGradeComparator: string;
+    hativa: string;
+    hatmar: string;
 }
 
 interface RightFilterSideBarProps {
-    // We can remove “open”/“onClose” if we always want it open
     onFilter: (filters: Partial<FilterState>) => void;
     onFilterChange?: (filters: Partial<FilterState>) => void;
-    currentFilters?: Partial<FilterState>; // optional for describing
+    currentFilters?: Partial<FilterState>;
 }
 
-/**
- * A permanent drawer anchored to the right,
- * always open, with top margin so it won't hide the top bar.
- */
 const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
                                                                    onFilter,
                                                                    onFilterChange,
-                                                                   currentFilters
+                                                                   currentFilters,
                                                                }) => {
-    // Local State
     const [freeText, setFreeText] = useState('');
-    const [forceName, setForceName] = useState('');
+    const [gdod, setGdod] = useState('');
+    const [pluga, setPluga] = useState('');
+    const [gzera, setGzera] = useState('');
+    const [mission, setMission] = useState('');
+    const [mentorName, setMentorName] = useState('');
     const [date, setDate] = useState('');
-    const [finalGrade, setFinalGrade] = useState('');
-    const [finalGradeComparator, setFinalGradeComparator] = useState('');
+    const [hativa, setHativa] = useState('');
+    const [hatmar, setHatmar] = useState('');
 
-    // Called when user clicks “Apply Filters”
     const handleApply = useCallback(() => {
         const filters: Partial<FilterState> = {};
         if (freeText.trim()) filters.freeText = freeText;
-        if (forceName.trim()) filters.forceName = forceName;
+        if (gdod.trim()) filters.gdod = gdod;
+        if (pluga.trim()) filters.pluga = pluga;
+        if (gzera.trim()) filters.gzera = gzera;
+        if (mission.trim()) filters.mission = mission;
+        if (mentorName.trim()) filters.mentorName = mentorName;
         if (date.trim()) filters.date = date;
-        if (finalGrade.trim()) filters.finalGrade = finalGrade;
-        if (finalGradeComparator) filters.finalGradeComparator = finalGradeComparator;
+        if (hativa.trim()) filters.hativa = hativa;
+        if (hatmar.trim()) filters.hatmar = hatmar;
 
         onFilter(filters);
         onFilterChange?.(filters);
-    }, [freeText, forceName, date, finalGrade, finalGradeComparator, onFilter, onFilterChange]);
+    }, [freeText, gdod, pluga, gzera, mission, mentorName, date, hativa, hatmar, onFilter, onFilterChange]);
 
-    // Called when user clicks “Clear”
     const handleClear = useCallback(() => {
         setFreeText('');
-        setForceName('');
+        setGdod('');
+        setPluga('');
+        setGzera('');
+        setMission('');
+        setMentorName('');
         setDate('');
-        setFinalGrade('');
-        setFinalGradeComparator('');
+        setHativa('');
+        setHatmar('');
         onFilter({});
         onFilterChange?.({});
     }, [onFilter, onFilterChange]);
@@ -80,9 +82,8 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
                 '& .MuiDrawer-paper': {
                     width: 320,
                     boxSizing: 'border-box',
-                    // So it doesn’t overlap the top bar:
-                    marginTop: '64px', // Adjust to match your top bar’s height
-                }
+                    marginTop: '64px', // To prevent overlapping with top bar
+                },
             }}
         >
             <Box sx={{ p: 2 }}>
@@ -90,19 +91,46 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
                     מסננים
                 </Typography>
                 <Divider />
-
                 <Stack spacing={2} sx={{ mt: 2 }}>
                     <TextField
-                        label="חיפוש חופשי"
+                        label="טקסט חופשי"
                         value={freeText}
                         onChange={(e) => setFreeText(e.target.value)}
                         variant="outlined"
                         size="small"
                     />
                     <TextField
-                        label="שם הכוח"
-                        value={forceName}
-                        onChange={(e) => setForceName(e.target.value)}
+                        label="גדוד"
+                        value={gdod}
+                        onChange={(e) => setGdod(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
+                    <TextField
+                        label="פלוגה"
+                        value={pluga}
+                        onChange={(e) => setPluga(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
+                    <TextField
+                        label="גזרה"
+                        value={gzera}
+                        onChange={(e) => setGzera(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
+                    <TextField
+                        label="משימה"
+                        value={mission}
+                        onChange={(e) => setMission(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
+                    <TextField
+                        label="חונך"
+                        value={mentorName}
+                        onChange={(e) => setMentorName(e.target.value)}
                         variant="outlined"
                         size="small"
                     />
@@ -110,6 +138,20 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
                         label="תאריך"
                         value={date}
                         onChange={(e) => setDate(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
+                    <TextField
+                        label="חטיבה"
+                        value={hativa}
+                        onChange={(e) => setHativa(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                    />
+                    <TextField
+                        label="חטיבה מרחבית"
+                        value={hatmar}
+                        onChange={(e) => setHatmar(e.target.value)}
                         variant="outlined"
                         size="small"
                     />

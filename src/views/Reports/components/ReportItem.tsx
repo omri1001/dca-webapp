@@ -15,14 +15,17 @@ import Scenarios from './ReportItem/Scenarios';
 
 export interface IReport {
     _id: string;
-    primaryKey: string; // e.g., "931_2025-03-04"
-    reportType: string; // 'פלוגה' or 'גדוד'
-    battalionName: string;
-    platoonSymbol?: string;
+    primaryKey: string;
+    reportType: string;
+    gdod: string;
+    pluga?: string;
     date: string;
     mentorName: string;
     exerciseManagerName: string;
-    mission: string;
+    gzera?: string;
+    mission?: string;
+    hativa?: string;
+    hatmar?: string;
     data: {
         grades: {
             grade1: any;
@@ -138,9 +141,13 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <ReportItemSummary
                     reportType={report.reportType}
-                    battalionName={report.battalionName}
-                    platoonSymbol={report.platoonSymbol}
+                    gdod={report.gdod}
+                    pluga={report.pluga}
                     date={report.date}
+                    hatmar={report.hatmar}
+                    hativa={report.hativa}
+                    gzera={report.gzera}
+                    mission={report.mission}
                 />
             </AccordionSummary>
             <AccordionDetails>

@@ -1,31 +1,41 @@
-// src/components/item-report/ReportItemSummary.tsx
-
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 interface ReportItemSummaryProps {
     reportType: string;
-    battalionName: string;
-    platoonSymbol?: string;
+    gdod: string;
+    pluga?: string;
     date: string;
+    hatmar?: string;
+    hativa?: string;
+    gzera?: string;
+    mission?: string;
 }
 
 const ReportItemSummary: React.FC<ReportItemSummaryProps> = ({
                                                                  reportType,
-                                                                 battalionName,
-                                                                 platoonSymbol,
+                                                                 gdod,
+                                                                 pluga,
                                                                  date,
+                                                                 hatmar,
+                                                                 hativa,
+                                                                 gzera,
+                                                                 mission,
                                                              }) => {
+    const missingText = "מידע לא קיים";
+
     return (
-        <Box sx={{ textAlign: 'right', width: '100%' }}>
+        <Box sx={{ textAlign: 'right', width: '100%', direction: 'rtl' }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                {reportType === 'פלוגה'
-                    ? `פלוגה: ${platoonSymbol ? platoonSymbol : ''}`
-                    : `גדודי: ${battalionName}`}
+                דוח: {reportType || missingText}
             </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>
-                {date}
-            </Typography>
+            <Typography variant="body2">תאריך: {date || missingText}</Typography>
+            <Typography variant="body2">חטמר: {hatmar || missingText}</Typography>
+            <Typography variant="body2">חטיבה: {hativa || missingText}</Typography>
+            <Typography variant="body2">גדוד: {gdod || missingText}</Typography>
+            <Typography variant="body2">פלוגה: {pluga || missingText}</Typography>
+            <Typography variant="body2">גזרה: {gzera || missingText}</Typography>
+            <Typography variant="body2">משימה: {mission || missingText}</Typography>
         </Box>
     );
 };

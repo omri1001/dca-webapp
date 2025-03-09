@@ -8,13 +8,15 @@ const ReportSchema = new Schema(
     {
         primaryKey: { type: String, required: false, unique: true },
         reportType: { type: String, required: false }, // e.g., 'פלוגה' or 'גדוד'
-        battalionName: { type: String, required: false },
-        platoonSymbol: { type: String, default: '' }, // only applicable if reportType === 'פלוגה'
+        gdod: { type: String, required: false }, // renamed from battalionName
+        pluga: { type: String, default: '' }, // renamed from platoonSymbol; only applicable if reportType === 'פלוגה'
         date: { type: String, required: false },
         mentorName: { type: String, required: false }, // שם חונך
         exerciseManagerName: { type: String, required: false }, // שם מנהל תרגיל
-        map: { type: String, required: false }, // options: 'a', 'b', 'c'
+        gzera: { type: String, required: false }, // renamed from map; options: 'a', 'b', 'c'
         mission: { type: String, required: false }, // options: 'a', 'b'
+        hativa: { type: String, required: false }, // new field for חטיבה
+        hatmar: { type: String, required: false }, // new field for חטמר
         data: {
             grades: {
                 // Always store both grade slots.

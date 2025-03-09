@@ -14,10 +14,10 @@ import {
 interface Step1BasicInfoProps {
     reportType: '' | 'פלוגה' | 'גדוד';
     setReportType: (value: '' | 'פלוגה' | 'גדוד') => void;
-    battalionName: string;
-    setBattalionName: (value: string) => void;
-    platoonSymbol: string;
-    setPlatoonSymbol: (value: string) => void;
+    gdod: string;
+    setGdod: (value: string) => void;
+    pluga: string;
+    setPluga: (value: string) => void;
     date: string;
     setDate: (value: string) => void;
     mentorName: string;
@@ -28,16 +28,20 @@ interface Step1BasicInfoProps {
     setGzera: (value: string) => void;
     mission: string;
     setMission: (value: string) => void;
+    hativa: string;
+    setHativa: (value: string) => void;
+    hatmar: string;
+    setHatmar: (value: string) => void;
     onNext: () => void;
 }
 
 const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                                                            reportType,
                                                            setReportType,
-                                                           battalionName,
-                                                           setBattalionName,
-                                                           platoonSymbol,
-                                                           setPlatoonSymbol,
+                                                           gdod,
+                                                           setGdod,
+                                                           pluga,
+                                                           setPluga,
                                                            date,
                                                            setDate,
                                                            mentorName,
@@ -48,9 +52,13 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                                                            setGzera,
                                                            mission,
                                                            setMission,
+                                                           hativa,
+                                                           setHativa,
+                                                           hatmar,
+                                                           setHatmar,
                                                            onNext,
                                                        }) => {
-    // Helper style for right-aligned TextField
+    // Consistent right-to-left style for inputs and labels.
     const textFieldRightAlign = {
         direction: 'rtl',
         '& .MuiInputBase-input': {
@@ -59,15 +67,8 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
     };
 
     return (
-        <Stack
-            spacing={3}
-            sx={{
-                // Make the entire container RTL
-                direction: 'rtl',
-                textAlign: 'right',
-            }}
-        >
-            {/* תאריך */}
+        <Stack spacing={3} sx={{ direction: 'rtl', textAlign: 'right' }}>
+            {/* 1. תאריך */}
             <TextField
                 label="תאריך"
                 type="date"
@@ -79,15 +80,12 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                 fullWidth
             />
 
-            {/* סוג דוח */}
-            <Box sx={{ textAlign: 'right' }}>
-                <FormLabel>בחר סוג דוח</FormLabel>
+            {/* 2. סוג דוח */}
+            <Box>
+                <FormLabel sx={{ textAlign: 'right', width: '100%' }}>בחר סוג דוח</FormLabel>
                 <RadioGroup
                     row
-                    sx={{
-                        // Place radio items from right to left
-                        flexDirection: 'row-reverse',
-                    }}
+                    sx={{ flexDirection: 'row-reverse', textAlign: 'right' }}
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value as 'פלוגה' | 'גדוד')}
                 >
@@ -95,90 +93,105 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                         value="פלוגה"
                         control={<Radio />}
                         label="דוח פלוגה"
-                        // Put label on the right, radio on the left
                         labelPlacement="start"
                     />
                     <FormControlLabel
                         value="גדוד"
                         control={<Radio />}
                         label="דוח גדוד"
-                        // Put label on the right, radio on the left
                         labelPlacement="start"
                     />
                 </RadioGroup>
             </Box>
 
-            {/* שם הגדוד + אות פלוגה */}
-            <Stack direction={{ xs: 'column', sm: 'row-reverse' }} spacing={2}>
+            {/* 3. חטמר */}
+            <TextField
+                label="חטמר"
+                value={hatmar}
+                onChange={(e) => setHatmar(e.target.value)}
+                fullWidth
+                sx={textFieldRightAlign}
+            />
+
+            {/* 4. חטיבה */}
+            <TextField
+                label="חטיבה"
+                value={hativa}
+                onChange={(e) => setHativa(e.target.value)}
+                fullWidth
+                sx={textFieldRightAlign}
+            />
+
+            {/* 5. שם גדוד */}
+            <TextField
+                label="שם גדוד"
+                value={gdod}
+                onChange={(e) => setGdod(e.target.value)}
+                required
+                fullWidth
+                sx={textFieldRightAlign}
+            />
+
+            {/* 6. אות פלוגה (only if report type is 'פלוגה') */}
+            {reportType === 'פלוגה' && (
                 <TextField
-                    label="שם הגדוד"
-                    value={battalionName}
-                    onChange={(e) => setBattalionName(e.target.value)}
+                    label="אות פלוגה"
+                    value={pluga}
+                    onChange={(e) => setPluga(e.target.value)}
                     required
                     fullWidth
                     sx={textFieldRightAlign}
                 />
-                {reportType === 'פלוגה' && (
-                    <TextField
-                        label="אות פלוגה"
-                        value={platoonSymbol}
-                        onChange={(e) => setPlatoonSymbol(e.target.value)}
-                        required
-                        fullWidth
-                        sx={textFieldRightAlign}
-                    />
-                )}
-            </Stack>
+            )}
 
-            {/* שם חונך + מנהל תרגיל */}
-            <Stack direction={{ xs: 'column', sm: 'row-reverse' }} spacing={2}>
-                <TextField
-                    label="שם חונך"
-                    value={mentorName}
-                    onChange={(e) => setMentorName(e.target.value)}
-                    required
-                    fullWidth
-                    sx={textFieldRightAlign}
-                />
-                <TextField
-                    label="שם מנהל תרגיל"
-                    value={exerciseManagerName}
-                    onChange={(e) => setExerciseManagerName(e.target.value)}
-                    required
-                    fullWidth
-                    sx={textFieldRightAlign}
-                />
-            </Stack>
+            {/* 7. גזרה */}
+            <TextField
+                label="גזרה"
+                select
+                value={gzera}
+                onChange={(e) => setGzera(e.target.value)}
+                required
+                fullWidth
+                sx={textFieldRightAlign}
+            >
+                <MenuItem value="a">אופציה A</MenuItem>
+                <MenuItem value="b">אופציה B</MenuItem>
+                <MenuItem value="c">אופציה C</MenuItem>
+            </TextField>
 
-            {/* גזרה + משימה */}
-            <Stack direction={{ xs: 'column', sm: 'row-reverse' }} spacing={2}>
-                <TextField
-                    label="גזרה"
-                    select
-                    value={gzera}
-                    onChange={(e) => setGzera(e.target.value)}
-                    required
-                    fullWidth
-                    sx={textFieldRightAlign}
-                >
-                    <MenuItem value="a">אופציה A</MenuItem>
-                    <MenuItem value="b">אופציה B</MenuItem>
-                    <MenuItem value="c">אופציה C</MenuItem>
-                </TextField>
+            {/* 8. משימה */}
+            <TextField
+                label="משימה"
+                select
+                value={mission}
+                onChange={(e) => setMission(e.target.value)}
+                required
+                fullWidth
+                sx={textFieldRightAlign}
+            >
+                <MenuItem value="a">משימה A</MenuItem>
+                <MenuItem value="b">משימה B</MenuItem>
+            </TextField>
 
-                <TextField
-                    label="משימה"
-                    select
-                    value={mission}
-                    onChange={(e) => setMission(e.target.value)}
-                    required
-                    fullWidth
-                    sx={textFieldRightAlign}
-                >
-                    <MenuItem value="a">משימה A</MenuItem>
-                    <MenuItem value="b">משימה B</MenuItem>
-                </TextField>
-            </Stack>
+            {/* 9. שם חונך */}
+            <TextField
+                label="שם חונך"
+                value={mentorName}
+                onChange={(e) => setMentorName(e.target.value)}
+                required
+                fullWidth
+                sx={textFieldRightAlign}
+            />
+
+            {/* 10. שם מנהל תרגיל */}
+            <TextField
+                label="שם מנהל תרגיל"
+                value={exerciseManagerName}
+                onChange={(e) => setExerciseManagerName(e.target.value)}
+                required
+                fullWidth
+                sx={textFieldRightAlign}
+            />
 
             {/* כפתור "הבא" */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
@@ -187,8 +200,8 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                     onClick={onNext}
                     disabled={
                         !reportType ||
-                        !battalionName ||
-                        (reportType === 'פלוגה' && !platoonSymbol) ||
+                        !gdod ||
+                        (reportType === 'פלוגה' && !pluga) ||
                         !mentorName ||
                         !exerciseManagerName ||
                         !gzera ||
