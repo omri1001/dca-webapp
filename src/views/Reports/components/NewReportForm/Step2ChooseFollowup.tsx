@@ -12,13 +12,6 @@ import {
     ListItemText
 } from '@mui/material';
 
-/** Step2ChooseFollowupProps
- *  - Step1 data: for displaying at top
- *  - Step2 data: for displaying already-entered follow-ups
- *  - onChooseFollowup: callback to go to step 3 for either 'grades' or 'scenario'
- *  - onBack: go back to step1
- *  - onFinalSubmit: finalize
- */
 interface Step2ChooseFollowupProps {
     /** Step1 (basic info) data: */
     reportType: '' | 'פלוגה' | 'גדוד';
@@ -29,6 +22,7 @@ interface Step2ChooseFollowupProps {
     pluga?: string;
     mentorName: string;
     exerciseManagerName: string;
+    mefakedHakoah: string;
     gzera: string;
     mission: string;
 
@@ -53,6 +47,7 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                                                      pluga,
                                                                      mentorName,
                                                                      exerciseManagerName,
+                                                                     mefakedHakoah,
                                                                      gzera,
                                                                      mission,
                                                                      gradeData1,
@@ -66,7 +61,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
     // Helper to display a "מדדים" summary card
     const renderGradeCard = (gradeData: any, slot: number) => {
         if (!gradeData) return null;
-
         const { name, scoreData } = gradeData;
         const finalGrade = scoreData?.finalGrade ?? 0;
         const parts = scoreData?.parts ?? [];
@@ -83,8 +77,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                     <Typography variant="body1">
                         <strong>ציון סופי:</strong> {finalGrade.toFixed(2)} / 100
                     </Typography>
-
-                    {/* Example of listing each part briefly. Adjust as you like. */}
                     {parts.length > 0 && (
                         <>
                             <Divider sx={{ my: 1 }} />
@@ -146,7 +138,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                     <Typography variant="h6" gutterBottom>
                         פרטי הדוח משלב 1
                     </Typography>
-
                     <Grid container spacing={2}>
                         {/* 1. תאריך */}
                         <Grid item xs={12} sm={6}>
@@ -178,7 +169,7 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                 <strong>שם גדוד:</strong> {gdod || 'לא הוגדר'}
                             </Typography>
                         </Grid>
-                        {/* 6. אות פלוגה (only if report type is 'פלוגה') */}
+                        {/* 6. אות פלוגה (if applicable) */}
                         {reportType === 'פלוגה' && (
                             <Grid item xs={12} sm={6}>
                                 <Typography>
@@ -210,6 +201,12 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                 <strong>שם מנהל תרגיל:</strong> {exerciseManagerName || 'לא הוגדר'}
                             </Typography>
                         </Grid>
+                        {/* 11. שם מפקד הכוח */}
+                        <Grid item xs={12} sm={6}>
+                            <Typography>
+                                <strong>שם מפקד הכוח:</strong> {mefakedHakoah || 'לא הוגדר'}
+                            </Typography>
+                        </Grid>
                     </Grid>
                 </CardContent>
             </Card>
@@ -219,7 +216,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                 <Typography variant="h6" gutterBottom>
                     הוספת מדדים
                 </Typography>
-                {/* Grade 1 */}
                 {!gradeData1 && (
                     <Button
                         variant="outlined"
@@ -230,8 +226,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                     </Button>
                 )}
                 {gradeData1 && renderGradeCard(gradeData1, 1)}
-
-                {/* Grade 2 */}
                 {!gradeData2 && gradeData1 && (
                     <Button
                         variant="outlined"
@@ -249,7 +243,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                 <Typography variant="h6" gutterBottom>
                     הוספת תמליל
                 </Typography>
-                {/* Scenario 1 */}
                 {!scenarioData1 && (
                     <Button
                         variant="outlined"
@@ -260,8 +253,6 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                     </Button>
                 )}
                 {scenarioData1 && renderScenarioCard(scenarioData1, 1)}
-
-                {/* Scenario 2 */}
                 {!scenarioData2 && scenarioData1 && (
                     <Button
                         variant="outlined"

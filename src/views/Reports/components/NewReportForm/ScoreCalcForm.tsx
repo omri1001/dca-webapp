@@ -24,11 +24,11 @@ const ScoreCalcForm: React.FC<ScoreCalcFormProps> = ({ onDataChange }) => {
         // Calculate the grade for each part.
         const partsWithGrades = parts.map((part) => ({
             ...part,
-            grade: computePartScore(part)
+            gradeOfPart: computePartScore(part)
         }));
         // Compute final grade based on the new parts data.
         const computedGrade = partsWithGrades.reduce(
-            (acc, part) => acc + part.grade,
+            (acc, part) => acc + part.gradeOfPart,
             0
         );
         const finalGrade = computedGrade - duatz * 5;

@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Button,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import RightFilterSideBar from './components/RightFilterSideBar';
 import ReportItem, { IReport } from './components/ReportItem';
 import NewReportDialog from './components/NewReportDialog';
+import ReportsAnalysis from './components/ReportsAnalysis/ReportsAnalysis';
 
 interface FilterState {
     freeText?: string;
@@ -14,6 +23,8 @@ interface FilterState {
     date?: string;
     hativa?: string;
     hatmar?: string;
+    reportType?: string;
+    mefakedHakoah?: string;
 }
 
 const CombatReports: React.FC = () => {
@@ -33,6 +44,8 @@ const CombatReports: React.FC = () => {
         if (filters.date) params.set('date', filters.date);
         if (filters.hativa) params.set('hativa', filters.hativa);
         if (filters.hatmar) params.set('hatmar', filters.hatmar);
+        if (filters.reportType) params.set('reportType', filters.reportType);
+        if (filters.mefakedHakoah) params.set('mefakedHakoah', filters.mefakedHakoah);
         return params.toString();
     };
 
@@ -77,6 +90,8 @@ const CombatReports: React.FC = () => {
         if (currentFilters.date) parts.push(`תאריך: "${currentFilters.date}"`);
         if (currentFilters.hativa) parts.push(`חטיבה: "${currentFilters.hativa}"`);
         if (currentFilters.hatmar) parts.push(`חטיבה מרחבית: "${currentFilters.hatmar}"`);
+        if (currentFilters.reportType) parts.push(`סוג דוח: "${currentFilters.reportType}"`);
+        if (currentFilters.mefakedHakoah) parts.push(`מפקד הכוח: "${currentFilters.mefakedHakoah}"`);
         return parts.join(', ');
     };
 
@@ -145,8 +160,6 @@ const CombatReports: React.FC = () => {
                         </Typography>
                     )}
 
-                    {reports.length === 0 && !error && <Typography>לא נמצאו דוחות</Typography>}
-
                     <Button
                         variant="contained"
                         color="primary"
@@ -156,10 +169,39 @@ const CombatReports: React.FC = () => {
                         הכנס דוח חדש
                     </Button>
 
-                    {/* Render Report Items */}
-                    {reports.map((report) => (
-                        <ReportItem key={report._id} report={report} />
-                    ))}
+                    {/* Accordion for Reports */}
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="reports-content"
+                            id="reports-header"
+                        >
+                            <Typography>הצג דוחות</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            {reports.length > 0 ? (
+                                reports.map((report) => (
+                                    <ReportItem key={report._id} report={report} />
+                                ))
+                            ) : (
+                                <Typography>לא נמצאו דוחות</Typography>
+                            )}
+                        </AccordionDetails>
+                    </Accordion>
+
+                    {/* New Accordion for Report Analysis */}
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls="analysis-content"
+                            id="analysis-header"
+                        >
+                            <Typography>הצג ניתוח דוחות</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <ReportsAnalysis reports={reports} />
+                        </AccordionDetails>
+                    </Accordion>
                 </Box>
 
                 {/* Right Filter Sidebar */}

@@ -7,7 +7,13 @@ import {
     TextField,
     Button,
     Divider,
+    FormControl,
+    FormLabel,
+    RadioGroup,
+    FormControlLabel,
+    Radio,
 } from '@mui/material';
+
 
 interface FilterState {
     freeText: string;
@@ -19,6 +25,7 @@ interface FilterState {
     date: string;
     hativa: string;
     hatmar: string;
+    reportType: string; // new field for report type
 }
 
 interface RightFilterSideBarProps {
@@ -41,6 +48,7 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
     const [date, setDate] = useState('');
     const [hativa, setHativa] = useState('');
     const [hatmar, setHatmar] = useState('');
+    const [reportType, setReportType] = useState('');
 
     const handleApply = useCallback(() => {
         const filters: Partial<FilterState> = {};
@@ -53,10 +61,11 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
         if (date.trim()) filters.date = date;
         if (hativa.trim()) filters.hativa = hativa;
         if (hatmar.trim()) filters.hatmar = hatmar;
+        if (reportType.trim()) filters.reportType = reportType; // include report type
 
         onFilter(filters);
         onFilterChange?.(filters);
-    }, [freeText, gdod, pluga, gzera, mission, mentorName, date, hativa, hatmar, onFilter, onFilterChange]);
+    }, [freeText, gdod, pluga, gzera, mission, mentorName, date, hativa, hatmar, reportType, onFilter, onFilterChange]);
 
     const handleClear = useCallback(() => {
         setFreeText('');
@@ -68,9 +77,11 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
         setDate('');
         setHativa('');
         setHatmar('');
+        setReportType(''); // clear report type
         onFilter({});
         onFilterChange?.({});
     }, [onFilter, onFilterChange]);
+
 
     return (
         <Drawer
@@ -155,6 +166,17 @@ const RightFilterSideBar: React.FC<RightFilterSideBarProps> = ({
                         variant="outlined"
                         size="small"
                     />
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">סוג דוח</FormLabel>
+                        <RadioGroup
+                            row
+                            value={reportType}
+                            onChange={(e) => setReportType(e.target.value)}
+                        >
+                            <FormControlLabel value="פלוגה" control={<Radio />} label="פלוגה" />
+                            <FormControlLabel value="גדוד" control={<Radio />} label="גדוד" />
+                        </RadioGroup>
+                    </FormControl>
                     <Stack direction="row" spacing={1}>
                         <Button variant="contained" color="primary" onClick={handleApply}>
                             סנן

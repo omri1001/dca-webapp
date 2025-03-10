@@ -31,6 +31,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
     const [mission, setMission] = useState('');
     const [hativa, setHativa] = useState('');
     const [hatmar, setHatmar] = useState('');
+    const [mefakedHakoah, setMefakedHakoah] = useState('');
 
     // --- Follow‑up data ---
     const [gradeData1, setGradeData1] = useState<any>(null);
@@ -62,6 +63,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             setMission('');
             setHativa('');
             setHatmar('');
+            setMefakedHakoah('');
             setGradeData1(null);
             setGradeData2(null);
             setScenarioData1(null);
@@ -83,7 +85,8 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             !mentorName ||
             !exerciseManagerName ||
             !gzera ||
-            !mission
+            !mission ||
+            !mefakedHakoah
         ) {
             return;
         }
@@ -98,7 +101,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
         setStep(3);
     };
 
-    // handle form data change
+    // Handle form data change
     const handleFormDataChange = useCallback((data: any) => {
         setCurrentFormData(data);
     }, []);
@@ -121,7 +124,6 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
     // Final submit
     const handleFinalSubmit = () => {
         // Build the primary key by joining non-empty fields with underscores.
-        // (Note: The order here is determined by your business logic.)
         const primaryKey = [gdod, pluga, date, hativa, hatmar]
             .filter(field => field.trim() !== '')
             .join('_');
@@ -137,6 +139,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             date,
             mentorName,
             exerciseManagerName,
+            mefakedHakoah,
             gzera,
             mission,
             hativa,
@@ -183,6 +186,8 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
                 setHativa={setHativa}
                 hatmar={hatmar}
                 setHatmar={setHatmar}
+                mefakedHakoah={mefakedHakoah}
+                setMefakedHakoah={setMefakedHakoah}
                 onNext={handleBasicInfoNext}
             />
         );
@@ -192,10 +197,11 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
                 // ---- Step1 data passed here:
                 reportType={reportType}
                 gdod={gdod}
-                pluga={pluga} // only used if דוח פלוגה
+                pluga={pluga}
                 date={date}
                 mentorName={mentorName}
                 exerciseManagerName={exerciseManagerName}
+                mefakedHakoah={mefakedHakoah}
                 gzera={gzera}
                 mission={mission}
                 hativa={hativa}

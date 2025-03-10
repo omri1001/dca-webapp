@@ -17,6 +17,7 @@ const ReportSchema = new Schema(
         mission: { type: String, required: false }, // options: 'a', 'b'
         hativa: { type: String, required: false }, // new field for חטיבה
         hatmar: { type: String, required: false }, // new field for חטמר
+        mefakedHakoah: { type: String, required: false }, // new field for שם מפקד הכוח
         data: {
             grades: {
                 // Always store both grade slots.

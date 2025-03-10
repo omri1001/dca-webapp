@@ -1,8 +1,12 @@
-// src/components/item-report/Grades.tsx
-
-import React, { useState } from 'react';
-import { Box, Typography, Button, Collapse, IconButton } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React from 'react';
+import {
+    Box,
+    Card,
+    CardContent,
+    Typography,
+    Divider,
+    useTheme,
+} from '@mui/material';
 import GradePartGraphs from './GradePartGraphs';
 
 interface GradeItem {
@@ -26,29 +30,26 @@ interface GradeItem {
 }
 
 interface GradesProps {
-    grade1: GradeItem;
-    grade2: GradeItem;
-    onEditGrade: (gradeType: 'grade1' | 'grade2') => void;
-    onAddGrade: (gradeType: 'grade1' | 'grade2') => void;
+    grade1: GradeItem | null;
+    grade2: GradeItem | null;
 }
 
-const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade }) => {
-    const [expanded, setExpanded] = useState(false);
+const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
+    const theme = useTheme();
 
-
-    const hasGrade = (grade: GradeItem) => {
+    // Checks if a grade has a valid finalGrade
+    const hasGrade = (grade: GradeItem | null) => {
         if (!grade || !grade.scoreData) return false;
-        const finalGrade =
-            typeof grade.scoreData.finalGrade === 'number'
-                ? grade.scoreData.finalGrade
-                : parseFloat(grade.scoreData.finalGrade);
-        return !isNaN(finalGrade) && finalGrade !== 0;
+        const parsed = parseFloat(String(grade.scoreData.finalGrade));
+        return !isNaN(parsed) && parsed !== 0;
     };
 
+    // Groups items by value: 'full', 'half', 'none'
     const groupItems = (grade: GradeItem) => {
         const fullItems: any[] = [];
         const halfItems: any[] = [];
         const noneItems: any[] = [];
+
         grade.scoreData.parts.forEach((part) => {
             part.items.forEach((item) => {
                 if (typeof item.value === 'string') {
@@ -62,42 +63,91 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade
                 }
             });
         });
+
         return { fullItems, halfItems, noneItems };
     };
 
+    // Renders the columns of items (full / half / none)
     const renderGradeColumns = (grade: GradeItem) => {
         const { fullItems, halfItems, noneItems } = groupItems(grade);
+
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, gap: 2, textAlign: 'right' }}>
-                {/* Full column */}
-                <Box sx={{ flex: 1, textAlign: 'right' }}>
-                    <Typography variant="subtitle2" sx={{ color: 'green', borderBottom: '1px solid green', mb: 1 }}>
-                        Full
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    mt: 2,
+                    gap: 4,
+                    textAlign: 'center',
+                }}
+            >
+                {/* Full */}
+                <Box sx={{ flex: 1 }}>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            color: 'green',
+                            borderBottom: '1px solid green',
+                            mb: 1,
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        מה הכח עשה טוב
                     </Typography>
                     {fullItems.map((item, index) => (
-                        <Typography key={index} variant="body2" sx={{ color: 'green', mb: 0.5 }}>
+                        <Typography
+                            key={index}
+                            variant="body1"
+                            sx={{ color: 'green', mb: 0.5 }}
+                        >
                             {index + 1}. {item.name}
                         </Typography>
                     ))}
                 </Box>
-                {/* Half column */}
-                <Box sx={{ flex: 1, textAlign: 'right' }}>
-                    <Typography variant="subtitle2" sx={{ color: 'orange', borderBottom: '1px solid orange', mb: 1 }}>
-                        Half
+
+                {/* Half */}
+                <Box sx={{ flex: 1 }}>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            color: 'orange',
+                            borderBottom: '1px solid orange',
+                            mb: 1,
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        מה הכח עשה טוב באופן חלקי
                     </Typography>
                     {halfItems.map((item, index) => (
-                        <Typography key={index} variant="body2" sx={{ color: 'orange', mb: 0.5 }}>
+                        <Typography
+                            key={index}
+                            variant="body1"
+                            sx={{ color: 'orange', mb: 0.5 }}
+                        >
                             {index + 1}. {item.name}
                         </Typography>
                     ))}
                 </Box>
-                {/* None column */}
-                <Box sx={{ flex: 1, textAlign: 'right' }}>
-                    <Typography variant="subtitle2" sx={{ color: 'red', borderBottom: '1px solid red', mb: 1 }}>
-                        None
+
+                {/* None */}
+                <Box sx={{ flex: 1 }}>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            color: 'red',
+                            borderBottom: '1px solid red',
+                            mb: 1,
+                            fontWeight: 'bold',
+                        }}
+                    >
+                        מה הצוות עשה לא טוב
                     </Typography>
                     {noneItems.map((item, index) => (
-                        <Typography key={index} variant="body2" sx={{ color: 'red', mb: 0.5 }}>
+                        <Typography
+                            key={index}
+                            variant="body1"
+                            sx={{ color: 'red', mb: 0.5 }}
+                        >
                             {index + 1}. {item.name}
                         </Typography>
                     ))}
@@ -106,89 +156,64 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2, onEditGrade, onAddGrade
         );
     };
 
+    // Safely formats finalGrade with 2 decimals
+    const formatFinalGrade = (grade: GradeItem) => {
+        const parsed = parseFloat(String(grade.scoreData.finalGrade));
+        return parsed.toFixed(2); // e.g., 75 -> "75.00"
+    };
+
     return (
-        <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
-                מדדים
-            </Typography>
-            {/* Grade 1 Header */}
-            <Box sx={{ mb: 2 }}>
-                <Typography variant="body1">
-                    מדד 1{' '}
-                    {grade1.scoreData?.finalGrade !== undefined &&
-                        `– ציון סופי: ${grade1.scoreData.finalGrade}`}
-                </Typography>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() =>
-                        hasGrade(grade1) ? onEditGrade('grade1') : onAddGrade('grade1')
-                    }
-                    sx={{ mt: 1 }}
-                >
-                    {hasGrade(grade1) ? 'ערוך מדד' : 'הוסף מדד'}
-                </Button>
-            </Box>
-            {/* Grade 2 Header */}
-            <Box sx={{ mb: 2 }}>
-                <Typography variant="body1">
-                    מדד 2{' '}
-                    {grade2.scoreData?.finalGrade !== undefined &&
-                        `– ציון סופי: ${grade2.scoreData.finalGrade}`}
-                </Typography>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() =>
-                        hasGrade(grade2) ? onEditGrade('grade2') : onAddGrade('grade2')
-                    }
-                    sx={{ mt: 1 }}
-                >
-                    {hasGrade(grade2) ? 'ערוך מדד' : 'הוסף מדד'}
-                </Button>
-            </Box>
-            {/* Toggle Arrow */}
-            <Box
-                sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer', mt: 1, textAlign: 'right' }}
-                onClick={() => setExpanded(!expanded)}
-            >
-                <IconButton
-                    size="small"
-                    sx={{
-                        transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                        transition: 'transform 0.3s',
-                    }}
-                >
-                    <ExpandMoreIcon />
-                </IconButton>
-                {!expanded && (
-                    <Typography variant="body2" sx={{ ml: 0.5 }}>
-                        הצג מדדים
-                    </Typography>
+        <Card
+            sx={{
+                maxWidth: 800,
+                margin: '20px auto',
+                direction: 'rtl',
+                textAlign: 'center',
+                boxShadow: 3,
+                backgroundColor: '#333',
+                color: '#fffdfd',
+                p: 2,
+            }}
+        >
+            <CardContent>
+                {/* פרטי תרגיל 1 */}
+                {hasGrade(grade1) && grade1 && (
+                    <Box sx={{ mt: 3 }}>
+                        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+                            פרטי תרגיל 1
+                        </Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>
+                            ציון סופי: {formatFinalGrade(grade1)}
+                        </Typography>
+                        {renderGradeColumns(grade1)}
+                        <Box sx={{ mt: 3 }}>
+                            <GradePartGraphs scoreData={grade1.scoreData} />
+                        </Box>
+                    </Box>
                 )}
-            </Box>
-            {/* Collapse for detailed metrics and graphs */}
-            <Collapse in={expanded}>
-                <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
-                        פרטי מדד 1
-                    </Typography>
-                    {renderGradeColumns(grade1)}
-                    {/* Render the detailed 3‑column graphs for each part of Grade 1 */}
-                    <GradePartGraphs scoreData={grade1.scoreData} />
-                </Box>
-                <Box sx={{ mb: 2 }}>
-                    <Typography variant="subtitle1" sx={{ mt: 2, mb: 1 }}>
-                        פרטי מדד 2
-                    </Typography>
-                    {renderGradeColumns(grade2)}
-                    {/* If grade2 has parts, you can also show its graphs */}
-                    {grade2.scoreData.parts.length > 0 && (
-                        <GradePartGraphs scoreData={grade2.scoreData} />
-                    )}
-                </Box>
-            </Collapse>
-        </Box>
+
+                {/* Divider only if both grades exist */}
+                {hasGrade(grade1) && hasGrade(grade2) && grade1 && grade2 && (
+                    <Divider sx={{ bgcolor: '#666', my: 4 }} />
+                )}
+
+                {/* פרטי תרגיל 2 */}
+                {hasGrade(grade2) && grade2 && (
+                    <Box sx={{ mt: 3 }}>
+                        <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+                            פרטי תרגיל 2
+                        </Typography>
+                        <Typography variant="h6" sx={{ mb: 2 }}>
+                            ציון סופי: {formatFinalGrade(grade2)}
+                        </Typography>
+                        {renderGradeColumns(grade2)}
+                        <Box sx={{ mt: 3 }}>
+                            <GradePartGraphs scoreData={grade2.scoreData} />
+                        </Box>
+                    </Box>
+                )}
+            </CardContent>
+        </Card>
     );
 };
 

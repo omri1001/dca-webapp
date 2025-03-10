@@ -32,7 +32,7 @@ exports.getReportByPrimaryKey = async (req, res) => {
  */
 exports.filterReports = async (req, res) => {
     try {
-        const { freeText, gdod, pluga, gzera, mission, mentorName, date, hativa, hatmar } = req.query;
+        const { freeText, gdod, pluga, gzera, mission, mentorName, date, hativa, hatmar, reportType } = req.query;
         const q = {};
 
         // Free text search across multiple fields
@@ -70,6 +70,10 @@ exports.filterReports = async (req, res) => {
         }
         if (hatmar) {
             q.hatmar = { $regex: hatmar, $options: 'i' };
+        }
+        // New filter for reportType
+        if (reportType) {
+            q.reportType = { $regex: reportType, $options: 'i' };
         }
 
         const reports = await Report.find(q);

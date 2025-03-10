@@ -32,6 +32,8 @@ interface Step1BasicInfoProps {
     setHativa: (value: string) => void;
     hatmar: string;
     setHatmar: (value: string) => void;
+    mefakedHakoah: string;
+    setMefakedHakoah: (value: string) => void;
     onNext: () => void;
 }
 
@@ -56,6 +58,8 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                                                            setHativa,
                                                            hatmar,
                                                            setHatmar,
+                                                           mefakedHakoah,
+                                                           setMefakedHakoah,
                                                            onNext,
                                                        }) => {
     // Consistent right-to-left style for inputs and labels.
@@ -154,9 +158,9 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                 fullWidth
                 sx={textFieldRightAlign}
             >
-                <MenuItem value="a">אופציה A</MenuItem>
-                <MenuItem value="b">אופציה B</MenuItem>
-                <MenuItem value="c">אופציה C</MenuItem>
+                <MenuItem value="נוב">נוב</MenuItem>
+                <MenuItem value="עותניאל">עותניאל</MenuItem>
+                <MenuItem value="תפוח">תפוח</MenuItem>
             </TextField>
 
             {/* 8. משימה */}
@@ -169,8 +173,9 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                 fullWidth
                 sx={textFieldRightAlign}
             >
-                <MenuItem value="a">משימה A</MenuItem>
-                <MenuItem value="b">משימה B</MenuItem>
+                <MenuItem value="עומק">עומק</MenuItem>
+                <MenuItem value="תפר">תפר</MenuItem>
+                <MenuItem value="גנה על היישוב">הגנה על היישוב</MenuItem>
             </TextField>
 
             {/* 9. שם חונך */}
@@ -193,6 +198,16 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                 sx={textFieldRightAlign}
             />
 
+            {/* 11. שם מפקד הכוח */}
+            <TextField
+                label="שם מפקד הכוח"
+                value={mefakedHakoah}
+                onChange={(e) => setMefakedHakoah(e.target.value)}
+                required
+                fullWidth
+                sx={textFieldRightAlign}
+            />
+
             {/* כפתור "הבא" */}
             <Box sx={{ display: 'flex', justifyContent: 'flex-start', mt: 2 }}>
                 <Button
@@ -205,7 +220,8 @@ const Step1BasicInfo: React.FC<Step1BasicInfoProps> = ({
                         !mentorName ||
                         !exerciseManagerName ||
                         !gzera ||
-                        !mission
+                        !mission ||
+                        !mefakedHakoah
                     }
                 >
                     הבא

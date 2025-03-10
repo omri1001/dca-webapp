@@ -1,7 +1,5 @@
-// src/components/Scenarios.tsx
-
 import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 interface Scenario {
     scenarioText: string;
@@ -9,8 +7,8 @@ interface Scenario {
 }
 
 interface ScenariosProps {
-    scenario1: Scenario;
-    scenario2: Scenario;
+    scenario1: Scenario | null;
+    scenario2: Scenario | null;
     onEditScenario: (scenarioType: 'scenario1' | 'scenario2') => void;
     onAddScenario: (scenarioType: 'scenario1' | 'scenario2') => void;
 }
@@ -21,51 +19,90 @@ const Scenarios: React.FC<ScenariosProps> = ({
                                                  onEditScenario,
                                                  onAddScenario,
                                              }) => {
-    const isEmpty = (text: string) => !text || text.trim() === '';
+    // A helper to check if a scenario is valid (non-null and non-empty)
+    const isValidScenario = (scenario: Scenario | null) =>
+        scenario && scenario.scenarioText.trim() !== '';
+
+    // If neither scenario is valid, render nothing
+    if (!isValidScenario(scenario1) && !isValidScenario(scenario2)) {
+        return null;
+    }
 
     return (
         <Box sx={{ mt: 2, textAlign: 'right' }}>
-            <Typography variant="h6" sx={{ mb: 1 }}>
+            <Typography
+                variant="h6"
+                sx={{
+                    mb: 2,
+                    fontWeight: 'bold',
+                    fontFamily: 'Roboto, sans-serif',
+                    color: '#fffafa',
+                }}
+            >
                 תרחישי אימון
             </Typography>
-            {/* Scenario 1 */}
-            <Box sx={{ mb: 2 }}>
-                <Typography variant="body1">תרחיש 1:</Typography>
-                <Typography variant="body2" sx={{ ml: 2 }}>
-                    {isEmpty(scenario1.scenarioText) ? 'אין תרחיש' : scenario1.scenarioText}
-                </Typography>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() =>
-                        isEmpty(scenario1.scenarioText)
-                            ? onAddScenario('scenario1')
-                            : onEditScenario('scenario1')
-                    }
-                    sx={{ mt: 1 }}
+            {isValidScenario(scenario1) && (
+                <Box
+                    sx={{
+                        mb: 2,
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor: '#5d5c5c',
+                    }}
                 >
-                    {isEmpty(scenario1.scenarioText) ? 'הוסף תמליל' : 'ערוך תמליל'}
-                </Button>
-            </Box>
-            {/* Scenario 2 */}
-            <Box>
-                <Typography variant="body1">תרחיש 2:</Typography>
-                <Typography variant="body2" sx={{ ml: 2 }}>
-                    {isEmpty(scenario2.scenarioText) ? 'אין תרחיש' : scenario2.scenarioText}
-                </Typography>
-                <Button
-                    variant="outlined"
-                    size="small"
-                    onClick={() =>
-                        isEmpty(scenario2.scenarioText)
-                            ? onAddScenario('scenario2')
-                            : onEditScenario('scenario2')
-                    }
-                    sx={{ mt: 1 }}
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            fontWeight: 'bold',
+                            fontFamily: 'Roboto, sans-serif',
+                            color: '#f8f7f7',
+                        }}
+                    >
+                        תרחיש 1:
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            ml: 2,
+                            fontFamily: 'Roboto, sans-serif',
+                            color: '#fffdfd',
+                        }}
+                    >
+                        {scenario1!.scenarioText}
+                    </Typography>
+                </Box>
+            )}
+            {isValidScenario(scenario2) && (
+                <Box
+                    sx={{
+                        mb: 2,
+                        p: 2,
+                        borderRadius: 2,
+                        backgroundColor: '#5d5c5c',
+                    }}
                 >
-                    {isEmpty(scenario2.scenarioText) ? 'הוסף תמליל' : 'ערוך תמליל'}
-                </Button>
-            </Box>
+                    <Typography
+                        variant="subtitle1"
+                        sx={{
+                            fontWeight: 'bold',
+                            fontFamily: 'Roboto, sans-serif',
+                            color: '#c9c9c9',
+                        }}
+                    >
+                        תרחיש 2:
+                    </Typography>
+                    <Typography
+                        variant="body1"
+                        sx={{
+                            ml: 2,
+                            fontFamily: 'Roboto, sans-serif',
+                            color: '#ffffff',
+                        }}
+                    >
+                        {scenario2!.scenarioText}
+                    </Typography>
+                </Box>
+            )}
         </Box>
     );
 };

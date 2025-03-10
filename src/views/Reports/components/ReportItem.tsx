@@ -1,17 +1,20 @@
-// src/views/Reports/components/ReportItem.tsx
-
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
     Box,
-    Button
+    Button,
+    Grid,
+    Typography,
+    CircularProgress,
+    Divider,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ReportItemSummary from './ReportItem/ReportItemSummary';
 import Grades from './ReportItem/Grades';
 import Scenarios from './ReportItem/Scenarios';
+import FinalGrade from './ReportItem/FinalGrade';
 
 export interface IReport {
     _id: string;
@@ -26,6 +29,7 @@ export interface IReport {
     mission?: string;
     hativa?: string;
     hatmar?: string;
+    mefakedHakoah: string;
     data: {
         grades: {
             grade1: any;
@@ -49,12 +53,15 @@ interface ReportItemProps {
 }
 
 const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
-    // Provide default data in case report.data is null.
+    // State for download loading indicators
+    const [downloadingDoc, setDownloadingDoc] = useState(false);
+    const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+    // Default values if report.data is missing
     const defaultGrades = {
         grade1: { name: '', scoreData: { parts: [], finalGrade: 0 } },
         grade2: { name: '', scoreData: { parts: [], finalGrade: 0 } },
     };
-
     const defaultScenarios = {
         scenario1: { scenarioText: '', scenarioUseAI: false },
         scenario2: { scenarioText: '', scenarioUseAI: false },
@@ -63,27 +70,25 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
     const grades = report.data?.grades || defaultGrades;
     const scenarios = report.data?.scenarios || defaultScenarios;
 
-    // -------------------------------------------------------------
-    // 1) Download DOCX
-    //    GET /api/reports/download-doc/:reportId
-    // -------------------------------------------------------------
+    // Download DOCX handler with loading state
     const handleDownloadDoc = async (reportId: string, primaryKey: string) => {
+        setDownloadingDoc(true);
         try {
-            const response = await fetch(`http://localhost:3001/api/reports/download-doc/${reportId}`, {
-                method: 'GET',
-            });
+            const response = await fetch(
+                `http://localhost:3001/api/reports/download-doc/${reportId}`,
+                {
+                    method: 'GET',
+                }
+            );
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
-            // Convert response to a Blob
             const blob = await response.blob();
-
-            // Create a download URL for the blob
             const downloadUrl = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
-            // Name the file with `primaryKey` if available:
-            link.download = primaryKey ? `${primaryKey}.docx` : `report_${reportId}.docx`;
+            link.download = primaryKey
+                ? `${primaryKey}.docx`
+                : `report_${reportId}.docx`;
             link.href = downloadUrl;
             document.body.appendChild(link);
             link.click();
@@ -91,27 +96,30 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
             window.URL.revokeObjectURL(downloadUrl);
         } catch (error) {
             console.error('Error downloading the DOCX:', error);
+        } finally {
+            setDownloadingDoc(false);
         }
     };
 
-    // -------------------------------------------------------------
-    // 2) Download PDF
-    //    GET /api/reports/download-pdf/:reportId
-    // -------------------------------------------------------------
+    // Download PDF handler with loading state
     const handleDownloadPdf = async (reportId: string, primaryKey: string) => {
+        setDownloadingPdf(true);
         try {
-            const response = await fetch(`http://localhost:3001/api/reports/download-pdf/${reportId}`, {
-                method: 'GET',
-            });
+            const response = await fetch(
+                `http://localhost:3001/api/reports/download-pdf/${reportId}`,
+                {
+                    method: 'GET',
+                }
+            );
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
             const blob = await response.blob();
             const downloadUrl = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
-            // Again, name the file with `primaryKey` if available:
-            link.download = primaryKey ? `${primaryKey}.pdf` : `report_${reportId}.pdf`;
+            link.download = primaryKey
+                ? `${primaryKey}.pdf`
+                : `report_${reportId}.pdf`;
             link.href = downloadUrl;
             document.body.appendChild(link);
             link.click();
@@ -119,10 +127,12 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
             window.URL.revokeObjectURL(downloadUrl);
         } catch (error) {
             console.error('Error downloading the PDF:', error);
+        } finally {
+            setDownloadingPdf(false);
         }
     };
 
-    // Handlers for add/edit events (placeholders):
+    // Handlers for grade and scenario actions
     const handleEditGrade = (gradeType: 'grade1' | 'grade2') => {
         console.log('Edit grade', gradeType);
     };
@@ -137,51 +147,99 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
     };
 
     return (
-        <Accordion sx={{ marginBottom: 2, border: '1px solid #ccc', textAlign: 'right' }}>
+        <Accordion sx={{ marginBottom: 2, border: '1px solid #ccc' }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <ReportItemSummary
+                    date={report.date}
+                    gzera={report.gzera}
                     reportType={report.reportType}
                     gdod={report.gdod}
                     pluga={report.pluga}
-                    date={report.date}
                     hatmar={report.hatmar}
                     hativa={report.hativa}
-                    gzera={report.gzera}
                     mission={report.mission}
+                    mefakedHakoah={report.mefakedHakoah}
+                    mentorName = {report.mentorName}
+                    exerciseManagerName={report.exerciseManagerName}
                 />
             </AccordionSummary>
+
             <AccordionDetails>
-                <Box sx={{ textAlign: 'right' }}>
-                    <Grades
-                        grade1={grades.grade1}
-                        grade2={grades.grade2}
-                        onEditGrade={handleEditGrade}
-                        onAddGrade={handleAddGrade}
-                    />
-                    <Scenarios
-                        scenario1={scenarios.scenario1}
-                        scenario2={scenarios.scenario2}
-                        onEditScenario={handleEditScenario}
-                        onAddScenario={handleAddScenario}
-                    />
+                <Grid container spacing={2} direction="column">
+                    {/* SCENARIO 1 */}
+                    <Grid item>
+                        <Scenarios
+                            scenario1={scenarios.scenario1}
+                            scenario2={null}
+                            onEditScenario={() => {}}
+                            onAddScenario={() => {}}
+                        />
+                    </Grid>
 
-                    {/* TWO BUTTONS: One for DOCX, one for PDF */}
-                    <Box sx={{ marginTop: 2, display: 'flex', gap: 2 }}>
-                        <Button
-                            variant="contained"
-                            onClick={() => handleDownloadDoc(report._id, report.primaryKey)}
-                        >
-                            הורד DOCX
-                        </Button>
+                    {/* GRADE 1 */}
+                    <Grid item>
+                        <Grades
+                            grade1={grades.grade1}
+                            grade2={null}
+                            onEditGrade={() => {}}
+                            onAddGrade={() => {}}
+                        />
+                    </Grid>
 
-                        <Button
-                            variant="contained"
-                            onClick={() => handleDownloadPdf(report._id, report.primaryKey)}
-                        >
-                            הורד PDF
-                        </Button>
-                    </Box>
-                </Box>
+                    {/* SCENARIO 2 */}
+                    <Grid item>
+                        <Scenarios
+                            scenario1={null}
+                            scenario2={scenarios.scenario2}
+                            onEditScenario={() => {}}
+                            onAddScenario={() => {}}
+                        />
+                    </Grid>
+
+                    {/* GRADE 2 */}
+                    <Grid item>
+                        <Grades
+                            grade1={null}
+                            grade2={grades.grade2}
+                            onEditGrade={() => {}}
+                            onAddGrade={() => {}}
+                        />
+                    </Grid>
+
+                    {/* FINAL GRADE GRAPH (inserted after Grade 2) */}
+                    <Grid item>
+                        <FinalGrade
+                            grade1={grades.grade1}
+                            grade2={grades.grade2}
+                        />
+                    </Grid>
+
+                    <Grid item>
+                        <Divider />
+                    </Grid>
+
+                    {/* Download Buttons */}
+                    <Grid item container spacing={2} justifyContent="flex-end">
+                        <Grid item>
+                            <Button
+                                variant="contained"
+                                onClick={() => {}}
+                                disabled={downloadingDoc}
+                            >
+                                {downloadingDoc ? <CircularProgress size={20} /> : 'הורד DOCX'}
+                            </Button>
+                        </Grid>
+                        <Grid item>
+                            <Button
+                                variant="contained"
+                                onClick={() => {}}
+                                disabled={downloadingPdf}
+                            >
+                                {downloadingPdf ? <CircularProgress size={20} /> : 'הורד PDF'}
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </AccordionDetails>
         </Accordion>
     );
