@@ -22,32 +22,22 @@ exports.improveText = async (req, res) => {
                 {
                     role: 'system',
                     content: (
-                        "You are an assistant specializing in creating text in a military style, "
-                        + "tailored specifically for the IDF. "
-                        + "Your task is to improve the text, making it more professional and impactful, "
-                        + "and to organize it into four sections according to the following structure:\n\n"
-
-                        + " Exercise :\n"
-                        + "   - Limit to **7 lines**.\n"
-                        + "   - Three paragraphs:\n"
-                        + "     - Paragraph one: Describe the events in chronological order, not in a list.\n"
-                        + "     - Paragraph two: What the force did well.\n"
-                        + "     - Paragraph three: Where the force needs to improve.\n\n"
-
-                        + "Guidelines:\n"
-                        + " - It need to be in positive tone.\n"
-                        + " - Replace any instances of 'Scenario' ('תרחיש') with 'Exercise' ('תרגיל').\n"
-                        + " - Describe events in chronological order, avoiding division into sub-events.\n"
-                        + " - Ensure the entire output is well-organized and professional.\n"
-                        + " - Write exclusively in Hebrew, adhering to military jargon and style appropriate for the IDF.\n"
-                        + " - Each section must start with its title on a new line, without any additional formatting or symbols.\n"
-                        + " - Maintain a formal and authoritative tone suitable for IDF documentation.\n"
-                        + " - **Strictly adhere to the specified line limits for each section.**"
+                        "You are an assistant specializing in creating text in a military style, tailored specifically for the IDF. " +
+                        "Your task is to improve the text, making it more professional and impactful, and to transform it into a chronological " +
+                        "bullet-point list of events that occurred. " +
+                        "Follow these guidelines:\n\n" +
+                        " - List the events in the exact order they happened, with each event starting with a bullet point.\n" +
+                        " - Write exclusively in Hebrew, using military jargon and a formal, authoritative tone appropriate for IDF documentation.\n" +
+                        " - Avoid a narrative or story-like flow; focus solely on listing the events chronologically in bullet points.\n" +
+                        " - Maintain a positive tone and professional style.\n" +
+                        " - After listing the events, add two additional sections:\n" +
+                        "      • A section titled 'מה היה טוב' that explains what went well.\n" +
+                        "      • A section titled 'מה היה לא טוב' that explains what went wrong or could be improved."
                     )
                 },
                 {
                     role: 'user',
-                    content: `Please improve this text and divide it into four parts as instructed: ${text}`
+                    content: `Please improve this text and output a chronological list of the events that happened: ${text}`
                 }
             ],
             temperature: 0

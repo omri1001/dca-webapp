@@ -105,7 +105,7 @@ const ReportItemSummary: React.FC<ReportItemSummaryProps> = ({
                         </Typography>
 
                         <Typography variant="h6">
-                            <strong>מנטור:</strong> {mentorName || missingText}
+                            <strong>חונך:</strong> {mentorName || missingText}
                         </Typography>
 
                         <Typography variant="h6">

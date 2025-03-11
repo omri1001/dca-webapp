@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Paper } from '@mui/material';
 
 interface Scenario {
     scenarioText: string;
@@ -29,7 +29,14 @@ const Scenarios: React.FC<ScenariosProps> = ({
     }
 
     return (
-        <Box sx={{ mt: 2, textAlign: 'right' }}>
+        <Box
+            // This ensures right-to-left text layout for Hebrew
+            dir="rtl"
+            sx={{
+                mt: 2,
+                textAlign: 'right',
+            }}
+        >
             <Typography
                 variant="h6"
                 sx={{
@@ -41,13 +48,15 @@ const Scenarios: React.FC<ScenariosProps> = ({
             >
                 תרחישי אימון
             </Typography>
+
             {isValidScenario(scenario1) && (
-                <Box
+                <Paper
+                    elevation={3}
                     sx={{
                         mb: 2,
                         p: 2,
                         borderRadius: 2,
-                        backgroundColor: '#5d5c5c',
+                        backgroundColor: '#424242', // You can pick any dark shade
                     }}
                 >
                     <Typography
@@ -56,6 +65,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                             fontWeight: 'bold',
                             fontFamily: 'Roboto, sans-serif',
                             color: '#f8f7f7',
+                            mb: 1,
                         }}
                     >
                         תרחיש 1:
@@ -63,22 +73,25 @@ const Scenarios: React.FC<ScenariosProps> = ({
                     <Typography
                         variant="body1"
                         sx={{
-                            ml: 2,
                             fontFamily: 'Roboto, sans-serif',
                             color: '#fffdfd',
+                            whiteSpace: 'pre-wrap', // preserves line breaks & spacing
+                            lineHeight: 1.6,
                         }}
                     >
                         {scenario1!.scenarioText}
                     </Typography>
-                </Box>
+                </Paper>
             )}
+
             {isValidScenario(scenario2) && (
-                <Box
+                <Paper
+                    elevation={3}
                     sx={{
                         mb: 2,
                         p: 2,
                         borderRadius: 2,
-                        backgroundColor: '#5d5c5c',
+                        backgroundColor: '#424242',
                     }}
                 >
                     <Typography
@@ -87,6 +100,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                             fontWeight: 'bold',
                             fontFamily: 'Roboto, sans-serif',
                             color: '#c9c9c9',
+                            mb: 1,
                         }}
                     >
                         תרחיש 2:
@@ -94,14 +108,15 @@ const Scenarios: React.FC<ScenariosProps> = ({
                     <Typography
                         variant="body1"
                         sx={{
-                            ml: 2,
                             fontFamily: 'Roboto, sans-serif',
                             color: '#ffffff',
+                            whiteSpace: 'pre-wrap', // preserves line breaks & spacing
+                            lineHeight: 1.6,
                         }}
                     >
                         {scenario2!.scenarioText}
                     </Typography>
-                </Box>
+                </Paper>
             )}
         </Box>
     );

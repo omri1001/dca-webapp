@@ -1,9 +1,12 @@
-// src/views/Reports/components/ReportsAnalysis.tsx
-
 import React from 'react';
 import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
-import { IReport } from '../ReportItem.tsx';
-
+import { IReport } from '../ReportItem';
+import GraphForAnalysis from './GraphAverageFinalGrade.tsx';
+import GraphAverageGradeOne from './GraphAverageGradeOne';
+import GraphAverageGradeTwo from './GraphAverageGradeTwo';
+import GraphAverageGradePartOne from './GraphAverageGradePartOne.tsx';
+import GraphAverageGradePartTwo from './GraphAverageGradePartTwo';
+import GraphAverageGradePartThree from './GraphAverageGradePartThree';
 interface ReportsAnalysisProps {
     reports: IReport[];
 }
@@ -65,6 +68,26 @@ const ReportsAnalysis: React.FC<ReportsAnalysisProps> = ({ reports }) => {
                         </ListItem>
                     ))}
                 </List>
+            </Box>
+            {/* Render the new GraphForAnalysis component */}
+            <Box sx={{ mt: 4 }}>
+                <GraphForAnalysis reports={reports} />
+            </Box>
+            {/* Render the GraphAverageGradeOne component */}
+            <Box sx={{ mt: 4 }}>
+                <GraphAverageGradeOne reports={reports} />
+            </Box>
+            <Box sx={{ mt: 4 }}>
+                <GraphAverageGradeTwo reports={reports} />
+            </Box>
+            <Box sx={{ mt: 4 }}>
+                <GraphAverageGradePartOne reports={reports} />
+            </Box>
+            <Box sx={{ mt: 4 }}>
+                <GraphAverageGradePartTwo reports={reports} />
+            </Box>
+            <Box sx={{ mt: 4 }}>
+                <GraphAverageGradePartThree reports={reports} />
             </Box>
         </Box>
     );

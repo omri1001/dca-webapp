@@ -67,7 +67,7 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
         return { fullItems, halfItems, noneItems };
     };
 
-    // Renders the columns of items (full / half / none)
+    // Renders the columns of items (full / half / none) for the overall grade
     const renderGradeColumns = (grade: GradeItem) => {
         const { fullItems, halfItems, noneItems } = groupItems(grade);
 
@@ -98,7 +98,7 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
                         <Typography
                             key={index}
                             variant="body1"
-                            sx={{ color: 'green', mb: 0.5 }}
+                            sx={{ color: 'white', mb: 0.5 }}
                         >
                             {index + 1}. {item.name}
                         </Typography>
@@ -122,7 +122,7 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
                         <Typography
                             key={index}
                             variant="body1"
-                            sx={{ color: 'orange', mb: 0.5 }}
+                            sx={{ color: 'white', mb: 0.5 }}
                         >
                             {index + 1}. {item.name}
                         </Typography>
@@ -146,11 +146,136 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
                         <Typography
                             key={index}
                             variant="body1"
-                            sx={{ color: 'red', mb: 0.5 }}
+                            sx={{ color: 'white', mb: 0.5 }}
                         >
                             {index + 1}. {item.name}
                         </Typography>
                     ))}
+                </Box>
+            </Box>
+        );
+    };
+
+    // Mapping for part numbers to titles
+    const partTitles: { [key: string]: string } = {
+        '1': 'גיבוש תמונת מצב באירוע',
+        '2': 'הפעלת כוחות ומשימות',
+        '3': 'מיצוי מכפילי כוח',
+    };
+
+    // New function to group items by their part (e.g., 1, 2, 3) and then by value order: full, half, none.
+    const renderPartColumns = (grade: GradeItem) => {
+        return (
+            <Box sx={{ mt: 4 }}>
+                <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
+                    פירוט לפי הישגים נדרשים
+                </Typography>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: 4,
+                        textAlign: 'center',
+                    }}
+                >
+                    {grade.scoreData.parts.map((part, partIndex) => {
+                        // Group items in each part by their value
+                        const fullItems: any[] = [];
+                        const halfItems: any[] = [];
+                        const noneItems: any[] = [];
+
+                        part.items.forEach((item) => {
+                            if (typeof item.value === 'string') {
+                                if (item.value === 'full') {
+                                    fullItems.push(item);
+                                } else if (item.value === 'half') {
+                                    halfItems.push(item);
+                                } else if (item.value === 'none') {
+                                    noneItems.push(item);
+                                }
+                            }
+                        });
+
+                        // Extract the part number if available
+                        const rawPart = part.items[0]?.part?.$numberInt || part.items[0]?.part;
+                        const partNumber = rawPart ? String(rawPart) : String(partIndex + 1);
+
+                        // Use the mapping or fallback to default header
+                        const partTitle = partTitles[partNumber] || `חלק ${partNumber}`;
+
+                        return (
+                            <Box key={partIndex} sx={{ flex: 1 }}>
+                                <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>
+                                    {partTitle}
+                                </Typography>
+                                {/* Full */}
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        color: 'green',
+                                        borderBottom: '1px solid green',
+                                        mb: 1,
+                                        fontWeight: 'bold',
+                                    }}
+                                >
+                                    מה הכח עשה טוב
+                                </Typography>
+                                {fullItems.map((item, index) => (
+                                    <Typography
+                                        key={index}
+                                        variant="body1"
+                                        sx={{ color: 'white', mb: 0.5 }}
+                                    >
+                                        {index + 1}. {item.name}
+                                    </Typography>
+                                ))}
+                                {/* Half */}
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        color: 'orange',
+                                        borderBottom: '1px solid orange',
+                                        mt: 2,
+                                        mb: 1,
+                                        fontWeight: 'bold',
+                                    }}
+                                >
+                                    מה הכח עשה טוב באופן חלקי
+                                </Typography>
+                                {halfItems.map((item, index) => (
+                                    <Typography
+                                        key={index}
+                                        variant="body1"
+                                        sx={{ color: 'white', mb: 0.5 }}
+                                    >
+                                        {index + 1}. {item.name}
+                                    </Typography>
+                                ))}
+                                {/* None */}
+                                <Typography
+                                    variant="subtitle1"
+                                    sx={{
+                                        color: 'red',
+                                        borderBottom: '1px solid red',
+                                        mt: 2,
+                                        mb: 1,
+                                        fontWeight: 'bold',
+                                    }}
+                                >
+                                    מה הצוות עשה לא טוב
+                                </Typography>
+                                {noneItems.map((item, index) => (
+                                    <Typography
+                                        key={index}
+                                        variant="body1"
+                                        sx={{ color: 'white', mb: 0.5 }}
+                                    >
+                                        {index + 1}. {item.name}
+                                    </Typography>
+                                ))}
+                            </Box>
+                        );
+                    })}
                 </Box>
             </Box>
         );
@@ -186,6 +311,8 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
                             ציון סופי: {formatFinalGrade(grade1)}
                         </Typography>
                         {renderGradeColumns(grade1)}
+                        {/* New section: group items by part with updated titles */}
+                        {renderPartColumns(grade1)}
                         <Box sx={{ mt: 3 }}>
                             <GradePartGraphs scoreData={grade1.scoreData} />
                         </Box>
@@ -207,6 +334,8 @@ const Grades: React.FC<GradesProps> = ({ grade1, grade2 }) => {
                             ציון סופי: {formatFinalGrade(grade2)}
                         </Typography>
                         {renderGradeColumns(grade2)}
+                        {/* Only render parts if available */}
+                        {grade2.scoreData.parts && grade2.scoreData.parts.length > 0 && renderPartColumns(grade2)}
                         <Box sx={{ mt: 3 }}>
                             <GradePartGraphs scoreData={grade2.scoreData} />
                         </Box>
