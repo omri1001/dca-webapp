@@ -11,11 +11,13 @@ import {
     ResponsiveContainer,
     BarChart,
     Bar,
+    Cell,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
     Legend,
+    LabelList,
 } from 'recharts';
 import { IReport } from '../ReportItem';
 
@@ -34,27 +36,27 @@ const GraphAverageGradePartOne: React.FC<GraphAverageGradePartOneProps> = ({ rep
         return parseFloat(grade);
     };
 
-    // Build an array of data points where each data point represents
-    // the average grade for part 1 from both grade1 and grade2 for a report.
+    // Build an array of data points representing the average grade for part 1
+    // from both grade1 and grade2 for a report.
     const data = reports.map(report => {
         let sum = 0;
         let count = 0;
 
-        // Get part 1 from grade1 if available.
+        // Get part 1 from grade1 if available and non-zero.
         const parts1 = report.data?.grades?.grade1?.scoreData?.parts;
         if (Array.isArray(parts1) && parts1[0] && parts1[0].gradeOfPart !== undefined) {
             const gradeVal = parseGrade(parts1[0].gradeOfPart);
-            if (!isNaN(gradeVal)) {
+            if (!isNaN(gradeVal) && gradeVal !== 0) {
                 sum += gradeVal;
                 count++;
             }
         }
 
-        // Get part 1 from grade2 if available.
+        // Get part 1 from grade2 if available and non-zero.
         const parts2 = report.data?.grades?.grade2?.scoreData?.parts;
         if (Array.isArray(parts2) && parts2[0] && parts2[0].gradeOfPart !== undefined) {
             const gradeVal = parseGrade(parts2[0].gradeOfPart);
-            if (!isNaN(gradeVal)) {
+            if (!isNaN(gradeVal) && gradeVal !== 0) {
                 sum += gradeVal;
                 count++;
             }
@@ -70,15 +72,26 @@ const GraphAverageGradePartOne: React.FC<GraphAverageGradePartOneProps> = ({ rep
         return { name, value: avg };
     });
 
-    // Compute the overall average for part 1 across all reports.
+    // Compute the overall average for part 1 using only non-zero averages.
     let overallSum = 0;
+    let overallCount = 0;
     data.forEach(item => {
-        overallSum += item.value;
+        if (item.value !== 0) {
+            overallSum += item.value;
+            overallCount++;
+        }
     });
-    const overallAvg = data.length > 0 ? parseFloat((overallSum / data.length).toFixed(2)) : 0;
+    const overallAvg = overallCount > 0 ? parseFloat((overallSum / overallCount).toFixed(2)) : 0;
 
     // Append an extra data point for the overall average.
     data.push({ name: 'ממוצע חלק 1', value: overallAvg });
+
+    // Custom legend payload for the keys.
+    const legendPayload = [
+        { value: 'ממוצע חלק 1', type: 'square', color: theme.palette.warning.main },
+        { value: 'ציון מתחת לממוצע', type: 'square', color: theme.palette.error.main },
+        { value: 'ציון מעל לממוצע', type: 'square', color: theme.palette.success.main },
+    ];
 
     return (
         <Card
@@ -87,8 +100,8 @@ const GraphAverageGradePartOne: React.FC<GraphAverageGradePartOneProps> = ({ rep
                 mx: 'auto',
                 mt: 3,
                 boxShadow: 3,
-                backgroundColor: '#333',
-                color: '#fff',
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
             }}
         >
             <CardHeader
@@ -111,48 +124,69 @@ const GraphAverageGradePartOne: React.FC<GraphAverageGradePartOneProps> = ({ rep
                         margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
                         barCategoryGap="20%"
                     >
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#444" />
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            vertical={false}
+                            stroke={theme.palette.divider}
+                        />
                         <XAxis
                             dataKey="name"
-                            tick={{ fontSize: 14, fontWeight: 'bold', fill: '#fff' }}
+                            tick={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                fill: theme.palette.text.primary,
+                            }}
                             interval={0}
-                            axisLine={{ stroke: '#999' }}
-                            tickLine={{ stroke: '#999' }}
+                            axisLine={{ stroke: theme.palette.divider }}
+                            tickLine={{ stroke: theme.palette.divider }}
                             dy={8}
                         />
                         <YAxis
                             domain={[0, 33.3]}
                             allowDecimals={false}
-                            tick={{ fontSize: 14, fill: '#fff' }}
-                            axisLine={{ stroke: '#999' }}
-                            tickLine={{ stroke: '#999' }}
+                            tick={{ fontSize: 14, fill: theme.palette.text.primary }}
+                            axisLine={{ stroke: theme.palette.divider }}
+                            tickLine={{ stroke: theme.palette.divider }}
                         />
                         <Tooltip
-                            formatter={(value: number) => value.toString()}
+                            formatter={(value: number) => value.toFixed(2)}
                             contentStyle={{
-                                backgroundColor: '#444',
-                                border: '1px solid #666',
-                                color: '#fff',
+                                backgroundColor: theme.palette.background.paper,
+                                border: `1px solid ${theme.palette.divider}`,
+                                color: theme.palette.text.primary,
                             }}
-                            itemStyle={{ color: '#fff' }}
+                            itemStyle={{ color: theme.palette.text.primary }}
                         />
                         <Legend
-                            wrapperStyle={{ fontSize: 14, color: '#fff' }}
+                            payload={legendPayload}
+                            wrapperStyle={{ fontSize: 14, color: theme.palette.text.primary }}
                             align="center"
                             verticalAlign="top"
                             iconSize={14}
                         />
-                        <Bar
-                            dataKey="value"
-                            name="ציון עבור גיבוש תמונת מצב באירוע"
-                            fill={theme.palette.info.light}
-                            radius={[4, 4, 0, 0]}
-                            barSize={40}
-                        />
+                        <Bar dataKey="value" name="ציון עבור גיבוש תמונת מצב באירוע" radius={[4, 4, 0, 0]} barSize={40}>
+                            {data.map((entry, index) => {
+                                let fillColor = theme.palette.info.light;
+                                if (entry.name === 'ממוצע חלק 1') {
+                                    fillColor = theme.palette.warning.main;
+                                } else if (entry.value < overallAvg) {
+                                    fillColor = theme.palette.error.main;
+                                } else if (entry.value > overallAvg) {
+                                    fillColor = theme.palette.success.main;
+                                }
+                                return <Cell key={`cell-${index}`} fill={fillColor} />;
+                            })}
+                            <LabelList
+                                dataKey="value"
+                                position="top"
+                                fill={theme.palette.text.primary}
+                                formatter={(value: number) => value.toFixed(2)}
+                            />
+                        </Bar>
                     </BarChart>
                 </ResponsiveContainer>
                 <Box mt={2}>
-                    <Typography variant="body2" align="center" sx={{ color: '#ccc' }}>
+                    <Typography variant="body2" align="center" sx={{ color: theme.palette.text.secondary }}>
                         * הגרף מציג את ציון גיבוש תמונת מצב באירוע (הממוצע של הציון עבור חלק 1 בכל דוח, והעמודה האחרונה מציגה את הממוצע הכולל)
                     </Typography>
                 </Box>

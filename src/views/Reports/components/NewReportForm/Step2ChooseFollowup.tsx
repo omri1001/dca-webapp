@@ -9,8 +9,9 @@ import {
     Divider,
     List,
     ListItem,
-    ListItemText
+    ListItemText,
 } from '@mui/material';
+import ScenarioSummary from './ScenarioSummary';
 
 interface Step2ChooseFollowupProps {
     /** Step1 (basic info) data: */
@@ -31,6 +32,9 @@ interface Step2ChooseFollowupProps {
     gradeData2: any;
     scenarioData1: any;
     scenarioData2: any;
+
+    /** Callback for scenario summary */
+    onSummarizeScenarios: (summary: string) => void;
 
     /** Navigation callbacks: */
     onChooseFollowup: (type: 'grades' | 'scenario', slot: 1 | 2) => void;
@@ -54,6 +58,7 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                                                      gradeData2,
                                                                      scenarioData1,
                                                                      scenarioData2,
+                                                                     onSummarizeScenarios,
                                                                      onChooseFollowup,
                                                                      onBack,
                                                                      onFinalSubmit,
@@ -89,8 +94,8 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                                         <ListItemText
                                             primary={
                                                 <span>
-                                                    <strong>חלק {idx + 1}:</strong> {part.title || '(ללא כותרת)'}
-                                                </span>
+                          <strong>חלק {idx + 1}:</strong> {part.title || '(ללא כותרת)'}
+                        </span>
                                             }
                                             secondary={`סוג: ${part.type || 'לא ידוע'}, ${part.items.length} פריטים`}
                                         />
@@ -265,7 +270,23 @@ const Step2ChooseFollowup: React.FC<Step2ChooseFollowupProps> = ({
                 {scenarioData2 && renderScenarioCard(scenarioData2, 2)}
             </Box>
 
-            {/* 4) Navigation Buttons */}
+            {/* 4) Scenario Summary */}
+            {scenarioData1 && scenarioData1.scenarioText && (
+                <Box>
+                    <Typography variant="h6" gutterBottom>
+                        תקציר תרחישים
+                    </Typography>
+                    <ScenarioSummary
+                        scenario1={scenarioData1.scenarioText}
+                        scenario2={scenarioData2?.scenarioText || ''}
+                        onSummaryGenerated={onSummarizeScenarios}
+                    />
+                </Box>
+            )}
+
+
+
+            {/* 5) Navigation Buttons */}
             <Box
                 sx={{
                     display: 'flex',

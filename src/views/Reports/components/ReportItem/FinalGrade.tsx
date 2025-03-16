@@ -48,9 +48,6 @@ const FinalGrade: React.FC<FinalGradeProps> = ({ grade1, grade2 }) => {
             : null;
 
     // Calculate average:
-    // - If both grades exist and > 0, average them.
-    // - If only one exists, use that grade.
-    // - Otherwise, set average to 0.
     let avgValue = 0;
     if (grade1Value !== null && grade2Value !== null) {
         avgValue = (grade1Value + grade2Value) / 2;
@@ -61,7 +58,6 @@ const FinalGrade: React.FC<FinalGradeProps> = ({ grade1, grade2 }) => {
     }
 
     // Build data for the chart.
-    // The "displayName" will include a line break so that the grade appears under the column name.
     const data = [
         {
             displayName: `תרגיל 1\n${grade1Value !== null ? grade1Value.toFixed(2) : '-'}`,
@@ -89,7 +85,7 @@ const FinalGrade: React.FC<FinalGradeProps> = ({ grade1, grade2 }) => {
                         x={0}
                         y={index * 15}
                         textAnchor="middle"
-                        fill="#fff"
+                        fill={theme.palette.text.primary}
                         fontSize={14}
                         fontWeight="bold"
                     >
@@ -107,8 +103,8 @@ const FinalGrade: React.FC<FinalGradeProps> = ({ grade1, grade2 }) => {
                 mx: 'auto',
                 mt: 3,
                 boxShadow: 3,
-                backgroundColor: '#333',
-                color: '#fff',
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
                 p: 2,
             }}
         >
@@ -132,29 +128,34 @@ const FinalGrade: React.FC<FinalGradeProps> = ({ grade1, grade2 }) => {
                         margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
                         barCategoryGap="20%"
                     >
-                        <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke={theme.palette.divider}
+                        />
                         <XAxis
                             dataKey="displayName"
                             tick={renderCustomTick}
-                            axisLine={{ stroke: '#999' }}
-                            tickLine={{ stroke: '#999' }}
+                            axisLine={{ stroke: theme.palette.divider }}
+                            tickLine={{ stroke: theme.palette.divider }}
                         />
                         <YAxis
                             domain={[0, 100]}
-                            tick={{ fontSize: 14, fill: '#fff' }}
-                            axisLine={{ stroke: '#999' }}
-                            tickLine={{ stroke: '#999' }}
+                            tick={{ fontSize: 14, fill: theme.palette.text.primary }}
+                            axisLine={{ stroke: theme.palette.divider }}
+                            tickLine={{ stroke: theme.palette.divider }}
                         />
                         <Tooltip
                             formatter={(value: number) => value.toFixed(2)}
                             contentStyle={{
-                                backgroundColor: '#444',
-                                border: '1px solid #666',
-                                color: '#fff',
+                                backgroundColor: theme.palette.background.paper,
+                                border: `1px solid ${theme.palette.divider}`,
+                                color: theme.palette.text.primary,
                             }}
-                            itemStyle={{ color: '#fff' }}
+                            itemStyle={{ color: theme.palette.text.primary }}
                         />
-                        <Legend wrapperStyle={{ fontSize: 14, color: '#fff' }} />
+                        <Legend
+                            wrapperStyle={{ fontSize: 14, color: theme.palette.text.primary }}
+                        />
                         <Bar
                             dataKey="finalGrade"
                             name="ציון סופי"
@@ -165,7 +166,11 @@ const FinalGrade: React.FC<FinalGradeProps> = ({ grade1, grade2 }) => {
                     </BarChart>
                 </ResponsiveContainer>
                 <Box mt={2}>
-                    <Typography variant="body2" align="center" sx={{ color: '#ccc' }}>
+                    <Typography
+                        variant="body2"
+                        align="center"
+                        sx={{ color: theme.palette.text.secondary }}
+                    >
                         *ציונים מוצגים מ-0 עד 100
                     </Typography>
                 </Box>

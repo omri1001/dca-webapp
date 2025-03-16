@@ -17,7 +17,11 @@ export interface NewReportDialogProps {
     onSubmit: (data: any) => void; // Final payload to backend
 }
 
-const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubmit }) => {
+const NewReportDialog: React.FC<NewReportDialogProps> = ({
+                                                             open,
+                                                             onClose,
+                                                             onSubmit,
+                                                         }) => {
     const [step, setStep] = useState<number>(1);
 
     // --- Step 1: Basic Info ---
@@ -38,6 +42,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
     const [gradeData2, setGradeData2] = useState<any>(null);
     const [scenarioData1, setScenarioData1] = useState<any>(null);
     const [scenarioData2, setScenarioData2] = useState<any>(null);
+    const [scenarioSummary, setScenarioSummary] = useState(''); // new state for summary
 
     // --- Step 3: Follow‑up form selection ---
     const [formType, setFormType] = useState<null | 'grades' | 'scenario'>(null);
@@ -68,6 +73,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
             setGradeData2(null);
             setScenarioData1(null);
             setScenarioData2(null);
+            setScenarioSummary('');
             setFormType(null);
             setCurrentSlot(null);
             setCurrentFormData(null);
@@ -125,7 +131,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
     const handleFinalSubmit = () => {
         // Build the primary key by joining non-empty fields with underscores.
         const primaryKey = [gdod, pluga, date, hativa, hatmar]
-            .filter(field => field.trim() !== '')
+            .filter((field) => field.trim() !== '')
             .join('_');
 
         const defaultGrade = { name: '', scoreData: { parts: [], finalGrade: 0 } };
@@ -152,6 +158,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
                 scenarios: {
                     scenario1: scenarioData1 || defaultScenario,
                     scenario2: scenarioData2 || defaultScenario,
+                    summary: scenarioSummary || '',
                 },
             },
         };
@@ -194,7 +201,7 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
     } else if (step === 2) {
         content = (
             <Step2ChooseFollowup
-                // ---- Step1 data passed here:
+                // ---- Step1 data:
                 reportType={reportType}
                 gdod={gdod}
                 pluga={pluga}
@@ -204,14 +211,16 @@ const NewReportDialog: React.FC<NewReportDialogProps> = ({ open, onClose, onSubm
                 mefakedHakoah={mefakedHakoah}
                 gzera={gzera}
                 mission={mission}
-                hativa={hativa}
                 hatmar={hatmar}
+                hativa={hativa}
                 // ---- Step2 existing data:
                 gradeData1={gradeData1}
                 gradeData2={gradeData2}
                 scenarioData1={scenarioData1}
                 scenarioData2={scenarioData2}
-                // ---- Callbacks:
+                // ---- Callback for scenario summary:
+                onSummarizeScenarios={setScenarioSummary}
+                // ---- Navigation callbacks:
                 onChooseFollowup={handleChooseFollowup}
                 onBack={() => setStep(1)}
                 onFinalSubmit={handleFinalSubmit}

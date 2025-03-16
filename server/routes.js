@@ -26,5 +26,7 @@ router.get('/reports/download-pdf/:reportId', downloadPdf);
 router.get('/pools', poolController.getAllPools);
 router.get('/pools/:id', poolController.getPoolById);
 router.post('/ai-improve-text', aiController.improveText);
+// NEW: Add endpoint for AI summarization
+router.post('/ai-summarize-text', aiController.summarizeText);
 
 module.exports = router;

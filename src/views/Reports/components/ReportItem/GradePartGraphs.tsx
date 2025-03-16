@@ -5,7 +5,7 @@ import {
     CardContent,
     Typography,
     Box,
-    useTheme
+    useTheme,
 } from '@mui/material';
 import {
     ResponsiveContainer,
@@ -36,7 +36,9 @@ const GradePartGraphs: React.FC<GradePartGraphsProps> = ({ scoreData }) => {
     const theme = useTheme();
 
     // Safely parse numeric values from various formats
-    const parseGrade = (grade: number | string | { $numberDouble?: string }): number => {
+    const parseGrade = (
+        grade: number | string | { $numberDouble?: string }
+    ): number => {
         if (typeof grade === 'object' && grade.$numberDouble) {
             return parseFloat(grade.$numberDouble);
         }
@@ -74,8 +76,8 @@ const GradePartGraphs: React.FC<GradePartGraphsProps> = ({ scoreData }) => {
                 mx: 'auto',
                 mt: 3,
                 boxShadow: 3,
-                backgroundColor: '#333', // Dark background
-                color: '#fff',           // White text for contrast
+                backgroundColor: theme.palette.background.paper,
+                color: theme.palette.text.primary,
             }}
         >
             <CardHeader
@@ -98,60 +100,67 @@ const GradePartGraphs: React.FC<GradePartGraphsProps> = ({ scoreData }) => {
                         margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
                         barCategoryGap="20%"
                     >
-                        {/* Subtle grid lines (lighter for a dark background) */}
+                        {/* Use the theme divider for grid lines */}
                         <CartesianGrid
                             strokeDasharray="3 3"
                             vertical={false}
-                            stroke="#444"
+                            stroke={theme.palette.divider}
                         />
 
-                        {/* X-axis with white ticks for a dark background */}
+                        {/* X-axis */}
                         <XAxis
                             dataKey="name"
-                            tick={{ fontSize: 14, fontWeight: 'bold', fill: '#fff' }}
+                            tick={{
+                                fontSize: 14,
+                                fontWeight: 'bold',
+                                fill: theme.palette.text.primary,
+                            }}
                             interval={0}
-                            axisLine={{ stroke: '#999' }}
-                            tickLine={{ stroke: '#999' }}
+                            axisLine={{ stroke: theme.palette.divider }}
+                            tickLine={{ stroke: theme.palette.divider }}
                             dy={8}
                         />
 
-                        {/* Y-axis from 0 to 100, also white ticks */}
+                        {/* Y-axis */}
                         <YAxis
                             domain={[0, 100]}
-                            tick={{ fontSize: 14, fill: '#fff' }}
-                            axisLine={{ stroke: '#999' }}
-                            tickLine={{ stroke: '#999' }}
+                            tick={{
+                                fontSize: 14,
+                                fill: theme.palette.text.primary,
+                            }}
+                            axisLine={{ stroke: theme.palette.divider }}
+                            tickLine={{ stroke: theme.palette.divider }}
                         />
 
-                        {/* Tooltip with dark background and white text */}
+                        {/* Tooltip */}
                         <Tooltip
                             formatter={(value: number) => value.toFixed(2)}
                             contentStyle={{
-                                backgroundColor: '#444',
-                                border: '1px solid #666',
-                                color: '#fff',
+                                backgroundColor: theme.palette.background.paper,
+                                border: `1px solid ${theme.palette.divider}`,
+                                color: theme.palette.text.primary,
                             }}
-                            itemStyle={{ color: '#fff' }}
+                            itemStyle={{ color: theme.palette.text.primary }}
                         />
 
-                        {/* Legend with white text */}
+                        {/* Legend */}
                         <Legend
-                            wrapperStyle={{ fontSize: 14, color: '#fff' }}
+                            wrapperStyle={{ fontSize: 14, color: theme.palette.text.primary }}
                             align="center"
                             verticalAlign="top"
                             iconSize={14}
                         />
 
-                        {/* Bar: ציון הכוח (no label on top) */}
+                        {/* Bar for ציון הכוח */}
                         <Bar
                             dataKey="grade"
                             name="ציון הכוח"
-                            fill={theme.palette.info.light}  // Use a lighter info color
+                            fill={theme.palette.info.light}
                             radius={[4, 4, 0, 0]}
                             barSize={40}
                         />
 
-                        {/* Bar: ציון ממוצע של שאר הכוחות (no label on top) */}
+                        {/* Bar for ציון ממוצע של שאר הכוחות */}
                         <Bar
                             dataKey="pass"
                             name="ציון ממוצע של שאר הכוחות"
@@ -165,7 +174,7 @@ const GradePartGraphs: React.FC<GradePartGraphsProps> = ({ scoreData }) => {
                     <Typography
                         variant="body2"
                         align="center"
-                        sx={{ color: '#ccc' }}
+                        sx={{ color: theme.palette.text.secondary }}
                     >
                         *ערכים מוצגים כציון מ-0 עד 100 (הכפלה פי 3 מהציון המקורי)
                     </Typography>

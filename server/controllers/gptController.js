@@ -1,4 +1,4 @@
-//controllers/gptController.js
+// controllers/gptController.js
 require('dotenv').config();
 const OpenAI = require('openai');
 
@@ -11,9 +11,7 @@ exports.improveText = async (req, res) => {
     try {
         const { text } = req.body;
         if (!text) {
-            return res
-                .status(400)
-                .json({ success: false, error: 'No text provided' });
+            return res.status(400).json({ success: false, error: 'No text provided' });
         }
 
         const response = await openai.chat.completions.create({
@@ -47,8 +45,44 @@ exports.improveText = async (req, res) => {
         return res.json({ success: true, improvedText });
     } catch (err) {
         console.error('Error calling OpenAI:', err);
-        return res
-            .status(500)
-            .json({ success: false, error: 'OpenAI error' });
+        return res.status(500).json({ success: false, error: 'OpenAI error' });
+    }
+};
+
+exports.summarizeText = async (req, res) => {
+    try {
+        const { text } = req.body;
+        if (!text) {
+            return res.status(400).json({ success: false, error: 'No text provided' });
+        }
+
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o-mini', // or "gpt-3.5-turbo"
+            messages: [
+                {
+                    role: 'system',
+                    content: (
+                        "You are an assistant specialized in summarizing military documents in Hebrew. " +
+                        "Your task is to generate an output of exactly 100 words. " +
+                        "If the provided text contains both תרחיש 1 and תרחיש 2, then summarize תרחיש 1 in exactly 30 words, " +
+                        "summarize תרחיש 2 in exactly 30 words, and finally provide a merged summary of both in exactly 40 words. " +
+                        "However, if the provided text contains only one scenario (only תרחיש 1), then summarize that scenario in exactly 70 words, " +
+                        "and add a 30-word section titled 'מה היה טוב ומה היה לא טוב' that outlines what went well and what could be improved. " +
+                        "Preserve all original spacing, including single and double spaces."
+                    )
+                },
+                {
+                    role: 'user',
+                    content: `Summarize the following text:\n\n${text}`
+                }
+            ],
+            temperature: 0
+        });
+
+        const summary = response.choices[0].message.content.trim();
+        return res.json({ success: true, summary });
+    } catch (err) {
+        console.error('Error calling OpenAI for summarization:', err);
+        return res.status(500).json({ success: false, error: 'OpenAI error' });
     }
 };

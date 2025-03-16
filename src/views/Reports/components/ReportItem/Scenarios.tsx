@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import { Box, Typography, Paper, useTheme } from '@mui/material';
 
 interface Scenario {
     scenarioText: string;
@@ -19,6 +19,8 @@ const Scenarios: React.FC<ScenariosProps> = ({
                                                  onEditScenario,
                                                  onAddScenario,
                                              }) => {
+    const theme = useTheme();
+
     // A helper to check if a scenario is valid (non-null and non-empty)
     const isValidScenario = (scenario: Scenario | null) =>
         scenario && scenario.scenarioText.trim() !== '';
@@ -30,7 +32,6 @@ const Scenarios: React.FC<ScenariosProps> = ({
 
     return (
         <Box
-            // This ensures right-to-left text layout for Hebrew
             dir="rtl"
             sx={{
                 mt: 2,
@@ -43,7 +44,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                     mb: 2,
                     fontWeight: 'bold',
                     fontFamily: 'Roboto, sans-serif',
-                    color: '#fffafa',
+                    color: theme.palette.text.primary,
                 }}
             >
                 תרחישי אימון
@@ -56,7 +57,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                         mb: 2,
                         p: 2,
                         borderRadius: 2,
-                        backgroundColor: '#424242', // You can pick any dark shade
+                        backgroundColor: theme.palette.background.paper,
                     }}
                 >
                     <Typography
@@ -64,7 +65,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                         sx={{
                             fontWeight: 'bold',
                             fontFamily: 'Roboto, sans-serif',
-                            color: '#f8f7f7',
+                            color: theme.palette.text.primary,
                             mb: 1,
                         }}
                     >
@@ -74,8 +75,8 @@ const Scenarios: React.FC<ScenariosProps> = ({
                         variant="body1"
                         sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            color: '#fffdfd',
-                            whiteSpace: 'pre-wrap', // preserves line breaks & spacing
+                            color: theme.palette.text.primary,
+                            whiteSpace: 'pre-wrap',
                             lineHeight: 1.6,
                         }}
                     >
@@ -91,7 +92,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                         mb: 2,
                         p: 2,
                         borderRadius: 2,
-                        backgroundColor: '#424242',
+                        backgroundColor: theme.palette.background.paper,
                     }}
                 >
                     <Typography
@@ -99,7 +100,7 @@ const Scenarios: React.FC<ScenariosProps> = ({
                         sx={{
                             fontWeight: 'bold',
                             fontFamily: 'Roboto, sans-serif',
-                            color: '#c9c9c9',
+                            color: theme.palette.text.secondary,
                             mb: 1,
                         }}
                     >
@@ -109,8 +110,8 @@ const Scenarios: React.FC<ScenariosProps> = ({
                         variant="body1"
                         sx={{
                             fontFamily: 'Roboto, sans-serif',
-                            color: '#ffffff',
-                            whiteSpace: 'pre-wrap', // preserves line breaks & spacing
+                            color: theme.palette.text.primary,
+                            whiteSpace: 'pre-wrap',
                             lineHeight: 1.6,
                         }}
                     >

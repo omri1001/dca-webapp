@@ -1,18 +1,52 @@
-import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText } from '@mui/material';
-import { IReport } from '../ReportItem';
-import GraphForAnalysis from './GraphAverageFinalGrade.tsx';
+import React, { useEffect, useRef } from 'react';
+import {
+    Box,
+    Typography,
+    List,
+    ListItem,
+    ListItemText,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useLocation } from 'react-router-dom';
+import GraphForAnalysis from './GraphAverageFinalGrade';
 import GraphAverageGradeOne from './GraphAverageGradeOne';
 import GraphAverageGradeTwo from './GraphAverageGradeTwo';
-import GraphAverageGradePartOne from './GraphAverageGradePartOne.tsx';
+import GraphAverageGradePartOne from './GraphAverageGradePartOne';
 import GraphAverageGradePartTwo from './GraphAverageGradePartTwo';
 import GraphAverageGradePartThree from './GraphAverageGradePartThree';
+import DetailedPartsAnalysis from './DetailedPartsAnalysis';
+import { IReport } from '../ReportItem';
+
 interface ReportsAnalysisProps {
     reports: IReport[];
 }
 
 const ReportsAnalysis: React.FC<ReportsAnalysisProps> = ({ reports }) => {
-    // Calculate average final grade for grade1 and grade2.
+    const location = useLocation();
+    const detailedRef = useRef<HTMLDivElement>(null);
+
+    // Scroll when the URL hash is '#detailedParts'
+    useEffect(() => {
+        if (location.hash === '#detailedParts' && detailedRef.current) {
+            detailedRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [location.hash]);
+
+    // Also listen for a custom event so that repeated clicks trigger scrolling.
+    useEffect(() => {
+        const handleScrollToDetailed = () => {
+            if (detailedRef.current) {
+                detailedRef.current.scrollIntoView({ behavior: 'smooth' });
+            }
+        };
+        window.addEventListener('scrollToDetailed', handleScrollToDetailed);
+        return () => window.removeEventListener('scrollToDetailed', handleScrollToDetailed);
+    }, []);
+
+    // Calculate average final grades for grade1 and grade2.
     let totalGrade1 = 0;
     let countGrade1 = 0;
     let totalGrade2 = 0;
@@ -44,51 +78,135 @@ const ReportsAnalysis: React.FC<ReportsAnalysisProps> = ({ reports }) => {
     });
 
     return (
-        <Box sx={{ textAlign: 'right', p: 2 }}>
+        <Box dir="rtl" sx={{ textAlign: 'right', p: 2 }}>
             <Typography variant="h6" gutterBottom>
-                ניתוח דוחות
+                ניתוח אימונים
             </Typography>
-            <Typography variant="body1">
-                מספר דוחות: {reports.length}
-            </Typography>
-            <Typography variant="body1">
-                ציון ממוצע למדד 1: {avgGrade1}
-            </Typography>
-            <Typography variant="body1">
-                ציון ממוצע למדד 2: {avgGrade2}
-            </Typography>
-            <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1">
-                    סיווג לפי סוג דוח:
-                </Typography>
-                <List>
-                    {Object.entries(reportTypeCount).map(([type, count]) => (
-                        <ListItem key={type} disablePadding>
-                            <ListItemText primary={`${type}: ${count}`} />
-                        </ListItem>
-                    ))}
-                </List>
-            </Box>
-            {/* Render the new GraphForAnalysis component */}
-            <Box sx={{ mt: 4 }}>
-                <GraphForAnalysis reports={reports} />
-            </Box>
-            {/* Render the GraphAverageGradeOne component */}
-            <Box sx={{ mt: 4 }}>
-                <GraphAverageGradeOne reports={reports} />
-            </Box>
-            <Box sx={{ mt: 4 }}>
-                <GraphAverageGradeTwo reports={reports} />
-            </Box>
-            <Box sx={{ mt: 4 }}>
-                <GraphAverageGradePartOne reports={reports} />
-            </Box>
-            <Box sx={{ mt: 4 }}>
-                <GraphAverageGradePartTwo reports={reports} />
-            </Box>
-            <Box sx={{ mt: 4 }}>
-                <GraphAverageGradePartThree reports={reports} />
-            </Box>
+
+            {/* Summary Accordion */}
+            <Accordion defaultExpanded>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>סיכום אימונים</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Typography variant="body1">
+                        מספר אימונים: {reports.length}
+                    </Typography>
+                    <Typography variant="body1">
+                        ציון ממוצע לתרחיש 1: {avgGrade1}
+                    </Typography>
+                    <Typography variant="body1">
+                        ציון ממוצע לתרחיש 2: {avgGrade2}
+                    </Typography>
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="subtitle1">
+                            סיווג לפי סוג אימון:
+                        </Typography>
+                        <List>
+                            {Object.entries(reportTypeCount).map(([type, count]) => (
+                                <ListItem key={type} disablePadding>
+                                    <ListItemText
+                                        primary={`${type}: ${count}`}
+                                        primaryTypographyProps={{ align: 'right' }}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
+                    </Box>
+                </AccordionDetails>
+            </Accordion>
+
+            {/* Parent Accordion for All Graphs */}
+            <Accordion defaultExpanded>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>גרפים</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    {/* GraphForAnalysis Accordion */}
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>גרף ציון סופי עבור כל מסגרת וממוצע</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <GraphForAnalysis reports={reports} />
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+
+                    {/* GraphAverageGradeOne Accordion */}
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>גרף ציון תרחיש 2 עבור כל מסגרת וממוצע (GraphAverageGradeOne)</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <GraphAverageGradeOne reports={reports} />
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+
+                    {/* GraphAverageGradeTwo Accordion */}
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>גרף ציון תרחיש 2 עבור כל מסגרת וממוצע (GraphAverageGradeTwo)</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <GraphAverageGradeTwo reports={reports} />
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+
+                    {/* GraphAverageGradePartOne Accordion */}
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>גרף עבור הישג נדרש - גיבוש תמונת מצב באירוע (GraphAverageGradePartOne)</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <GraphAverageGradePartOne reports={reports} />
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+
+                    {/* GraphAverageGradePartTwo Accordion */}
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>גרף עבור הישג נדרש - הפעלת כוחות ומשימות (GraphAverageGradePartTwo)</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <GraphAverageGradePartTwo reports={reports} />
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+
+                    {/* GraphAverageGradePartThree Accordion */}
+                    <Accordion>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                            <Typography>גרף ממוצע ציון חלק 3 (GraphAverageGradePartThree)</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <Box>
+                                <GraphAverageGradePartThree reports={reports} />
+                            </Box>
+                        </AccordionDetails>
+                    </Accordion>
+                </AccordionDetails>
+            </Accordion>
+
+            {/* Detailed Parts Analysis Accordion */}
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <Typography>ניתוח חלקים מפורט</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <Box ref={detailedRef}>
+                        <DetailedPartsAnalysis reports={reports} />
+                    </Box>
+                </AccordionDetails>
+            </Accordion>
         </Box>
     );
 };

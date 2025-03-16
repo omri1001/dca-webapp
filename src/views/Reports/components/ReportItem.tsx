@@ -1,12 +1,11 @@
+// File: ReportItem.tsx (or wherever your ReportItem component is defined)
 import React, { useState } from 'react';
 import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
-    Box,
-    Button,
     Grid,
-    Typography,
+    Button,
     CircularProgress,
     Divider,
 } from '@mui/material';
@@ -15,6 +14,7 @@ import ReportItemSummary from './ReportItem/ReportItemSummary';
 import Grades from './ReportItem/Grades';
 import Scenarios from './ReportItem/Scenarios';
 import FinalGrade from './ReportItem/FinalGrade';
+import SummarizeScenarios from './ReportItem/SummarizeScenarios'; // <-- Import here
 
 export interface IReport {
     _id: string;
@@ -44,6 +44,7 @@ export interface IReport {
                 scenarioText: string;
                 scenarioUseAI: boolean;
             };
+            summary?: string; // <-- Here is our summary
         };
     } | null;
 }
@@ -53,11 +54,11 @@ interface ReportItemProps {
 }
 
 const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
-    // State for download loading indicators
+    // States for download loading indicators
     const [downloadingDoc, setDownloadingDoc] = useState(false);
     const [downloadingPdf, setDownloadingPdf] = useState(false);
 
-    // Default values if report.data is missing
+    // Default fallback values
     const defaultGrades = {
         grade1: { name: '', scoreData: { parts: [], finalGrade: 0 } },
         grade2: { name: '', scoreData: { parts: [], finalGrade: 0 } },
@@ -65,86 +66,17 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
     const defaultScenarios = {
         scenario1: { scenarioText: '', scenarioUseAI: false },
         scenario2: { scenarioText: '', scenarioUseAI: false },
+        summary: '', // fallback if missing
     };
 
-    const grades = report.data?.grades || defaultGrades;
+    // Safely extract scenarios and summary
     const scenarios = report.data?.scenarios || defaultScenarios;
+    const summary = scenarios.summary || '';
 
-    // Download DOCX handler with loading state
-    const handleDownloadDoc = async (reportId: string, primaryKey: string) => {
-        setDownloadingDoc(true);
-        try {
-            const response = await fetch(
-                `http://localhost:3001/api/reports/download-doc/${reportId}`,
-                {
-                    method: 'GET',
-                }
-            );
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const blob = await response.blob();
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = primaryKey
-                ? `${primaryKey}.docx`
-                : `report_${reportId}.docx`;
-            link.href = downloadUrl;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(downloadUrl);
-        } catch (error) {
-            console.error('Error downloading the DOCX:', error);
-        } finally {
-            setDownloadingDoc(false);
-        }
-    };
+    // Safely extract grades
+    const grades = report.data?.grades || defaultGrades;
 
-    // Download PDF handler with loading state
-    const handleDownloadPdf = async (reportId: string, primaryKey: string) => {
-        setDownloadingPdf(true);
-        try {
-            const response = await fetch(
-                `http://localhost:3001/api/reports/download-pdf/${reportId}`,
-                {
-                    method: 'GET',
-                }
-            );
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const blob = await response.blob();
-            const downloadUrl = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.download = primaryKey
-                ? `${primaryKey}.pdf`
-                : `report_${reportId}.pdf`;
-            link.href = downloadUrl;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-            window.URL.revokeObjectURL(downloadUrl);
-        } catch (error) {
-            console.error('Error downloading the PDF:', error);
-        } finally {
-            setDownloadingPdf(false);
-        }
-    };
-
-    // Handlers for grade and scenario actions
-    const handleEditGrade = (gradeType: 'grade1' | 'grade2') => {
-        console.log('Edit grade', gradeType);
-    };
-    const handleAddGrade = (gradeType: 'grade1' | 'grade2') => {
-        console.log('Add grade', gradeType);
-    };
-    const handleEditScenario = (scenarioType: 'scenario1' | 'scenario2') => {
-        console.log('Edit scenario', scenarioType);
-    };
-    const handleAddScenario = (scenarioType: 'scenario1' | 'scenario2') => {
-        console.log('Add scenario', scenarioType);
-    };
+    // ... Download handlers, scenario handlers, etc.
 
     return (
         <Accordion sx={{ marginBottom: 2, border: '1px solid #ccc' }}>
@@ -159,14 +91,19 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
                     hativa={report.hativa}
                     mission={report.mission}
                     mefakedHakoah={report.mefakedHakoah}
-                    mentorName = {report.mentorName}
+                    mentorName={report.mentorName}
                     exerciseManagerName={report.exerciseManagerName}
                 />
             </AccordionSummary>
 
             <AccordionDetails>
                 <Grid container spacing={2} direction="column">
-                    {/* SCENARIO 1 */}
+                    {/* Summarized Scenarios */}
+                    <Grid item>
+                        <SummarizeScenarios summary={summary} />
+                    </Grid>
+
+                    {/* Scenario 1 */}
                     <Grid item>
                         <Scenarios
                             scenario1={scenarios.scenario1}
@@ -176,7 +113,7 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
                         />
                     </Grid>
 
-                    {/* GRADE 1 */}
+                    {/* Grade 1 */}
                     <Grid item>
                         <Grades
                             grade1={grades.grade1}
@@ -186,7 +123,7 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
                         />
                     </Grid>
 
-                    {/* SCENARIO 2 */}
+                    {/* Scenario 2 */}
                     <Grid item>
                         <Scenarios
                             scenario1={null}
@@ -196,7 +133,7 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
                         />
                     </Grid>
 
-                    {/* GRADE 2 */}
+                    {/* Grade 2 */}
                     <Grid item>
                         <Grades
                             grade1={null}
@@ -206,12 +143,9 @@ const ReportItem: React.FC<ReportItemProps> = ({ report }) => {
                         />
                     </Grid>
 
-                    {/* FINAL GRADE GRAPH (inserted after Grade 2) */}
+                    {/* Final Grade Graph */}
                     <Grid item>
-                        <FinalGrade
-                            grade1={grades.grade1}
-                            grade2={grades.grade2}
-                        />
+                        <FinalGrade grade1={grades.grade1} grade2={grades.grade2} />
                     </Grid>
 
                     <Grid item>

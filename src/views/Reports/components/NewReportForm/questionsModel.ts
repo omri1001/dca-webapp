@@ -51,7 +51,6 @@ export interface Item {
     active: boolean;
     part: number;
     category: QuestionCategory;
-    questionNumber: number;
     // For chronologic questions, answerText may be defined directly on the item.
     answerText?: AnswerText;
 
@@ -192,16 +191,6 @@ export function createDefaultParts(): Part[] {
             answerText: { full: 'בוצע', none: 'לא בוצע' }
         },
         {
-            name: 'חדרישה והפעלת תת תקיפה חטיבתית: מס"קר / זיק לברחנים',
-            type: 'trafficLight',
-            value: null,
-            active: false,
-            part: 2,
-            category: 'chronologic',
-            questionNumber: 10,
-            answerText: { full: 'נדרש ובוצע', half: 'לא נדרש או לא בוצע', none: 'לא נדרש ולא בוצע ' }
-        },
-        {
             name: 'חזרה לשגרה',
             type: 'multipleChoice',
             value: null,
@@ -241,8 +230,7 @@ export function createDefaultParts(): Part[] {
                     }
                 }
             }
-        },
-
+        }
     );
 
     // Part 3 (questions with part: 3)
@@ -256,6 +244,16 @@ export function createDefaultParts(): Part[] {
             category: 'chronologic',
             questionNumber: 4,
             answerText: { full: 'קרה', none: 'לא קרה' }
+        },
+        {
+            name: 'הדרישה והפעלת תת תקיפה חטיבתית: מס"קר / זיק לברחנים',
+            type: 'trafficLight',
+            value: null,
+            active: false,
+            part: 3,
+            category: 'chronologic',
+            questionNumber: 10,
+            answerText: { full: 'נדרש ובוצע', half: 'לא נדרש או לא בוצע', none: 'לא נדרש ולא בוצע ' }
         }
     );
 
@@ -353,8 +351,6 @@ export function createDefaultParts(): Part[] {
                 }
             }
         }
-
-
     );
 
     // Part 2 (static questions)
@@ -375,7 +371,6 @@ export function createDefaultParts(): Part[] {
                         half: 'נדרש ולא בוצע',
                         none: 'לא נדרש ולא בוצע'
                     }
-
                 },
                 'נפ״ק (במידה והשלישה אינה מתרגלת, אזי יש לדלג על הצהוב)': {
                     type: 'trafficLight',
@@ -411,7 +406,6 @@ export function createDefaultParts(): Part[] {
                 }
             }
         }
-
     );
 
     // Part 3 (static questions)
@@ -421,7 +415,7 @@ export function createDefaultParts(): Part[] {
             type: 'multipleChoice',
             value: null,
             active: false,
-            part: 1,
+            part: 3,
             category: 'static',
             questionNumber: 1,
             extra: {
@@ -483,3 +477,11 @@ export function createDefaultParts(): Part[] {
 
     return parts;
 }
+
+// ─── NAMES OF PARTS ─────────────────────────────────────────────────────────
+// New section: names of parts.
+export const partNames: string[] = [
+    'גיבוש תמונת מצב באירוע',
+    'הפעלת כוחות ומשימות',
+    'מיצוי מכפילי כוח'
+];

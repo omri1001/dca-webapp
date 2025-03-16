@@ -196,7 +196,7 @@ const CombatReports: React.FC = () => {
                             aria-controls="analysis-content"
                             id="analysis-header"
                         >
-                            <Typography>הצג ניתוח דוחות</Typography>
+                            <Typography>הצג ניתוח אימונים</Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <ReportsAnalysis reports={reports} />

@@ -34,10 +34,15 @@ const ReportSchema = new Schema(
                     scenario1: { scenarioText: '', scenarioUseAI: false },
                     scenario2: { scenarioText: '', scenarioUseAI: false }
                 }
+            },
+            // New field: partNames populated with the names from questionsModel.ts
+            partNames: {
+                type: [String],
+                default: ['גיבוש תמונת מצב באירוע', 'הפעלת כוחות ומשימות', 'מיצוי מכפילי כוח']
             }
         }
     },
-    { collection: 'reports' }
+    { collection: 'test_for_part_names' }
 );
 
 module.exports = combatConnection.model('Report', ReportSchema);
