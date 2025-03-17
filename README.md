@@ -1,8 +1,8 @@
 # DCA-Webapp 🚀
 
-[![GitHub issues](https://img.shields.io/github/issues/yourusername/dca-webapp)](https://github.com/omri1001/dca-webapp/issues)
-[![GitHub forks](https://img.shields.io/github/forks/yourusername/dca-webapp)](https://github.com/omri1001/dca-webapp/network)
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/dca-webapp)](https://github.com/omri1001/dca-webapp/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/omri1001/dca-webapp)](https://github.com/omri1001/dca-webapp/issues)
+[![GitHub forks](https://img.shields.io/github/forks/omri1001/dca-webapp)](https://github.com/omri1001/dca-webapp/network)
+[![GitHub stars](https://img.shields.io/github/stars/omri1001/dca-webapp)](https://github.com/omri1001/dca-webapp/stargazers)
 [![License](https://img.shields.io/github/license/omri1001/dca-webapp)](LICENSE)
 
 
