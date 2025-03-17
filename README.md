@@ -46,7 +46,7 @@
 ---
 
 ## Screenshots
-###all the screenshots its not real data
+### all the screenshots its not real data
 
 ### Report Creation
 ![Report Creation](assets/report-creation.png)  
