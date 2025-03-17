@@ -42,7 +42,7 @@ const ReportSchema = new Schema(
             }
         }
     },
-    { collection: 'test_for_part_names' }
+    { collection: 'test_for_hativa' }
 );
 
 module.exports = combatConnection.model('Report', ReportSchema);
