@@ -5,6 +5,23 @@
 [![GitHub stars](https://img.shields.io/github/stars/yourusername/dca-webapp)](https://github.com/omri1001/dca-webapp/stargazers)
 [![License](https://img.shields.io/github/license/omri1001/dca-webapp)](LICENSE)
 
+
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Key Functionalities](#key-functionalities)
+- [Screenshots](#screenshots)
+- [Repository Structure](#repository-structure)
+- [Setup & Installation](#setup--installation)
+- [Environment Variables](#environment-variables)
+- [Built With](#built-with)
+- [Future Enhancements](#future-enhancements)
+- [License](#license)
+- [Contributing](#contributing)
+
+---
+
 ## Overview
 
 **DCA-Webapp** is a full-stack web application built with **TypeScript** and **Material-UI (MUI)** on the client side and **Node.js** with **Express** on the server side. It demonstrates advanced functionalities including report creation, data processing with a Large Language Model (LLM) via Retrieval-Augmented Generation (RAG), interactive data visualization, multi-parameter filtering, and report editing. *All data in the application is mock data used for demonstration.*
@@ -52,20 +69,7 @@
 
 ---
 
-## Table of Contents
 
-- [Overview](#overview)
-- [Key Functionalities](#key-functionalities)
-- [Screenshots](#screenshots)
-- [Repository Structure](#repository-structure)
-- [Setup & Installation](#setup--installation)
-- [Environment Variables](#environment-variables)
-- [Built With](#built-with)
-- [Future Enhancements](#future-enhancements)
-- [License](#license)
-- [Contributing](#contributing)
-
----
 
 ## Repository Structure
 
