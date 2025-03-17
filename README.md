@@ -28,7 +28,7 @@
 
 ---
 
-## Screenshots
+## Screenshots(all the screenshots its on fake data)
 
 ### Report Creation
 ![Report Creation](assets/report-creation.png)  
@@ -42,7 +42,7 @@
 ![Data Visualization: Graphs](assets/data-visualization-graphs.png)  
 *Leverage interactive bar or line graphs to gain a quick overview of trends.*
 
-### Data Visualization (Scenarios)
+### Data Visualization (Scenarios) - (get by LLM abilities -RAG & Agents)
 ![Data Visualization: Scenarios](assets/data-visualization-scenrios.png)  
 *Explore different scenarios or configurations with dynamic chart displays.*
 
