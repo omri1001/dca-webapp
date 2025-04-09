@@ -72,20 +72,17 @@
 
 
 
-## Repository Structure
+## 📁 Repository Structure
 
-```plaintext
+```bash
 dca-webapp/
-├── react-mui-vite-ts/   # Client-side: React, MUI, Vite, TypeScript
+├── react-mui-vite-ts/    # Client (React + MUI + Vite + TS)
 │   ├── package.json
 │   ├── vite.config.ts
 │   └── ...
-└── server/              # Server-side: Node.js, Express
+└── server/               # Server (Node.js + Express)
     ├── package.json
     └── server.js
-
-
----
 
 ## Setup & Installation 🛠️
 
