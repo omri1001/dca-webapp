@@ -84,6 +84,8 @@ dca-webapp/
     ├── package.json
     └── server.js
 
+---
+
 ## Setup & Installation 🛠️
 
 ### Prerequisites
@@ -105,7 +107,7 @@ dca-webapp/
     ```bash
     npm start
     ```
-
+---
 ### Server Setup
 
 1. Navigate to the server folder:
