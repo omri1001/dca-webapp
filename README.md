@@ -135,6 +135,8 @@ For the server to interact with GPT-4 and other services, create a `.env` file i
 OPENAI_API_KEY=<your-openai-api-key>
 MONGODB_URI=<your-mongodb-connection-string>
 
+```
+
 ## Built With 🛠️
 
 ### Client:
